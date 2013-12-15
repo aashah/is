@@ -16,7 +16,7 @@ Where downloaded packages should be stored
 - Variables:
 	- INTERFACESDKROOT - indicates the root directory of the exhibit
 		- this may have been created by the ./interfacesdksetup.sh script
-		- file structure of root:
+		- file structure of root (as created by the setup script):
 			/root
 				/development
 					/modules
