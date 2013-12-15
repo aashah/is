@@ -1,5 +1,17 @@
 Things that need to be done/considered
 
+COMMAND LINE STRUCTURE:
+Prefix: is
+Subcommands: {
+	get: [-v verbose] [-c check/validate module] [modules]
+	mv: [-v verbose] [-c check/validate] [directories]
+	run: [-v verbose]
+}
+
+Since we take over how modules will be stored, we need a command to handle
+moving preexisting modules over to our file structure
+	- can validate modules too
+
 Where downloaded packages should be stored
 	- Take this in as an argument or rely on an environment variable
 	- I think the project is getting large enough to move it into an env var
