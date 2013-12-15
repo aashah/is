@@ -1,0 +1,25 @@
+Things that need to be done/considered
+
+Where downloaded packages should be stored
+	- Take this in as an argument or rely on an environment variable
+	- I think the project is getting large enough to move it into an env var
+
+- help(), usage() and proper exiting
+
+- how to traverse a git repository
+	- moving to support other kinds of repositories
+
+- An SDK version manager might be pretty cool, would help manage the
+	environment variables and maintaining backwards compatibility to a degree
+	- For now, best to rely on certain env variables
+
+- Variables:
+	- INTERFACESDKROOT - indicates the root directory of the exhibit
+		- this may have been created by the ./interfacesdksetup.sh script
+		- file structure of root:
+			/root
+				/development
+					/modules
+				/sources
+					/modules
+					/interface_sdk
