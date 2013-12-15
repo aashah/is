@@ -18,6 +18,16 @@ type vcsCmd struct {
 	updateCmd string
 }
 
+func (v *vcsCmd) String() string {
+	return v.name
+}
+
 var vcsList = []*vcsCmd{
 	vcsGit,
 }
+
+// TODO: match package name with vcsCmd
+// TODO: Run the vcsCmd on a given directory
+// - Check for conflicts (permissions, directory exists (do I need to only
+// update?))
+
