@@ -7,6 +7,11 @@ import (
 	"strings"
 )
 
+// Approach on handling subcommands has largely been influenced by
+// golang's approach towards the `go` cli command.
+// This can be found at src/cmd/go/main.go in the golang source at
+// http://code.google.com/p/go/source/browse/src/cmd/go/
+
 type Command struct {
 	// Runs the command
 	Run func(cmd *Command, args []string)
