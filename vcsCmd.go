@@ -9,6 +9,12 @@ import (
 	"regexp"
 )
 
+func init() {
+	for _, srv := range vcsPaths {
+		srv.regexp = regexp.MustCompile(srv.re)
+	}
+}
+
 // We look towards `go get` again as to how best to approach the issue of
 // pulling from a remote repository.
 // This is influenced by the golang source code src/cmd/go/vcs.go found at:
@@ -20,6 +26,22 @@ type vcsCmd struct {
 
 	createCmd string
 	updateCmd string
+}
+
+type vcsPath struct {
+	code string
+	prefix string
+	name string
+	re string
+	path string
+	repo string
+	regexp *regexp.Regexp
+}
+
+type vcsInfo struct {
+	vcs *vcsCmd
+	path string
+	repo string
 }
 
 func (v *vcsCmd) String() string {
@@ -79,16 +101,6 @@ var vcsList = []*vcsCmd{
 	vcsGit,
 }
 
-type vcsPath struct {
-	code string
-	prefix string
-	name string
-	re string
-	path string
-	repo string
-	regexp *regexp.Regexp
-}
-
 var vcsPaths = []*vcsPath{
 	// Github
 	{
@@ -98,20 +110,6 @@ var vcsPaths = []*vcsPath{
 		repo: "git@{prefix}:{name}/{repo}.git",
 		re: `^(?P<prefix>github\.com)/(?P<name>[A-Za-z0-9_.\-]+)/(?P<repo>[A-Za-z0-9_.\-]+)(/[A-Za-z0-9_.\-]+)*$`,
 	},
-}
-
-type vcsInfo struct {
-	vcs *vcsCmd
-	path string
-	repo string
-}
-
-
-
-func init() {
-	for _, srv := range vcsPaths {
-		srv.regexp = regexp.MustCompile(srv.re)
-	}
 }
 
 func vcsByCmd(cmd string) *vcsCmd {
