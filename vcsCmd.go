@@ -48,7 +48,7 @@ func (v *vcsCmd) String() string {
 	return v.name
 }
 
-func (v *vcsCmd) runCmd(dir string, cmdLine string, verbose bool, keyvals map[string]string) ([]byte, error) {
+func (v *vcsCmd) runCmd(dir string, cmdLine string, verbose bool, keyvals map[string]string) error {
 	if keyvals != nil {
 		// expand cmd
 		cmdLine = expand(keyvals, cmdLine)
@@ -59,7 +59,7 @@ func (v *vcsCmd) runCmd(dir string, cmdLine string, verbose bool, keyvals map[st
 	// TODO Check if v.cmd exists
 	if _, err := exec.LookPath(v.cmd); err != nil {
 		fmt.Fprintf(os.Stderr, "is: missing %s command.", v.cmd)
-		return nil, err
+		return err
 	}
 	fmt.Println("Executing", v.cmd, "with", args)
 	// Execute
@@ -70,8 +70,10 @@ func (v *vcsCmd) runCmd(dir string, cmdLine string, verbose bool, keyvals map[st
 	cmd.Stderr = &buf
 	err := cmd.Run()
 	out := buf.Bytes()
-	os.Stdout.Write(out)
-	return out, err
+	if verbose {
+		os.Stdout.Write(out)
+	}
+	return err
 }
 
 func (v *vcsCmd) download(dir string, repo string, verbose bool) error {
@@ -79,13 +81,11 @@ func (v *vcsCmd) download(dir string, repo string, verbose bool) error {
 		"repo": repo,
 		"dir":  dir,
 	}
-	_, err := v.runCmd(dir, v.createCmd, verbose, keyvals)
-	return err
+	return v.runCmd(dir, v.createCmd, verbose, keyvals)
 }
 
 func (v *vcsCmd) update(dir string, verbose bool) error {
-	_, err := v.runCmd(dir, v.updateCmd, verbose, nil)
-	return err
+	return v.runCmd(dir, v.updateCmd, verbose, nil)
 }
 
 var vcsGit = &vcsCmd{
