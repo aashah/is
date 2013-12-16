@@ -80,8 +80,11 @@ func main() {
 	}
 
 	if args[0] == "help" {
-		processHelp(args[1])
-		fmt.Println("Help...")
+		if len(args) < 2 {
+			generalUsage()
+		} else {
+			processHelp(args[1])
+		}
 	}
 
 	// check if we have the correct environmetn variables
