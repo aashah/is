@@ -43,6 +43,7 @@ func (c *Command) Usage() {
 
 var commands = []*Command{
 	cmdGet,
+	cmdVersion,
 }
 
 func generalUsage() {
