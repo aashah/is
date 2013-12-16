@@ -8,14 +8,14 @@ const (
     patch int = 0
 )
 
+func init() {
+    cmdVersion.Run = runVersion
+}
+
 var cmdVersion = &Command{
     UsageLine: "version",
     Short: "prints the program version",
     Long: "prints the program version",
-}
-
-func init() {
-    cmdVersion.Run = runVersion
 }
 
 func runVersion(cmd *Command, args []string) {

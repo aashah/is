@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+func init() {
+	cmdGet.Run = runGet
+}
+
 var cmdGet = &Command{
 	UsageLine: "get [-v] [-c] [module paths]",
 	Short: "download and package modules",
@@ -29,10 +33,6 @@ Flags:
 
 var getV = cmdGet.Flag.Bool("v", false, "")
 var getC = cmdGet.Flag.Bool("c", false, "")
-
-func init() {
-	cmdGet.Run = runGet
-}
 
 func runGet(cmd *Command, args []string) {
 	// TODO foreach args, attempt to do all the following
