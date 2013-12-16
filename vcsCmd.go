@@ -61,7 +61,10 @@ func (v *vcsCmd) runCmd(dir string, cmdLine string, verbose bool, keyvals map[st
 		fmt.Fprintf(os.Stderr, "is: missing %s command.", v.cmd)
 		return err
 	}
-	fmt.Println("Executing", v.cmd, "with", args)
+
+	if verbose {
+		fmt.Println("Executing", v.cmd, "with", cmdLine, "...")
+	}
 	// Execute
 	cmd := exec.Command(v.cmd, args...)
 	cmd.Dir = dir
@@ -81,10 +84,16 @@ func (v *vcsCmd) download(dir string, repo string, verbose bool) error {
 		"repo": repo,
 		"dir":  dir,
 	}
+	if verbose {
+		fmt.Println("Downloading", repo, "into", dir)
+	}
 	return v.runCmd(dir, v.createCmd, verbose, keyvals)
 }
 
 func (v *vcsCmd) update(dir string, verbose bool) error {
+	if verbose {
+		fmt.Println("Updating", dir)
+	}
 	return v.runCmd(dir, v.updateCmd, verbose, nil)
 }
 

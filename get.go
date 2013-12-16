@@ -94,7 +94,10 @@ func getModule(info *vcsInfo) error {
 	}
 
 	if *getB {
-		fmt.Println("Attempting to build")
+		err = buildModule(targetPath, *getV)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -102,7 +105,6 @@ func getModule(info *vcsInfo) error {
 func downloadModule(info *vcsInfo, targetPath string) error {
 	// make the directory, call the download command onto that directory
 	// if verbose mode, output any data from the command
-	fmt.Println(info.vcs, targetPath)
 	if err := os.MkdirAll(targetPath, 0777); err != nil {
 		return err
 	}
