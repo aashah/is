@@ -49,6 +49,7 @@ func generalUsage() {
 	fmt.Println(`
 Is is a tool for managing the Colorado School of Mines Interface SDK exhibit.
 Use "is help [command]" for more information about a command.
+Use "is [command] [command args] to execute the command.
 
 Available commands:
 	`)
