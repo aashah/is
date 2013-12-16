@@ -3,7 +3,7 @@ Things that need to be done/considered
 COMMAND LINE STRUCTURE:
 Prefix: is
 Subcommands: {
-	get: [-v verbose] [-c check/validate module] [modules]
+	get: [-v verbose] [-c check/validate module] [-u update] [modules]
 	mv: [-v verbose] [-c check/validate] [directories]
 	run: [-v verbose]
 }

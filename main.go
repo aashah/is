@@ -19,6 +19,7 @@ type Command struct {
 	// Usage and short information on the command
 	UsageLine string
 	Short string
+	Long string
 
 	// Flags specific for this command
 	Flag flag.FlagSet
@@ -33,14 +34,38 @@ func (c *Command) Name() string {
 	return name
 }
 
+
 func (c *Command) Usage() {
 	fmt.Fprintf(os.Stderr, "usage: %s\n\n", c.UsageLine)
-	fmt.Fprintf(os.Stderr, "%s\n", strings.TrimSpace(c.Short))
+	fmt.Fprintf(os.Stderr, "%s\n", strings.TrimSpace(c.Long))
 	os.Exit(2)
 }
 
 var commands = []*Command{
 	cmdGet,
+}
+
+func generalUsage() {
+	fmt.Println(`
+Is is a tool for managing the Colorado School of Mines Interface SDK exhibit.
+Use "is help [command]" for more information about a command.
+
+Available commands:
+	`)
+	for _, cmd := range commands {
+		fmt.Println(cmd.Name(), ": ", cmd.Short)
+	}
+	os.Exit(0)
+}
+
+func processHelp(helpCmd string) {
+	for _, cmd := range commands {
+		if cmd.Name() == helpCmd {
+			cmd.Usage();
+			os.Exit(0)
+		}
+	}
+	generalUsage()
 }
 
 func main() {
@@ -49,12 +74,12 @@ func main() {
 
 	if len(args) < 1 {
 		fmt.Println("usage...")
-		os.Exit(2)
+		generalUsage()
 	}
 
 	if args[0] == "help" {
+		processHelp(args[1])
 		fmt.Println("Help...")
-		os.Exit(0)
 	}
 
 	// check if we have the correct environmetn variables
