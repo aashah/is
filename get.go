@@ -32,10 +32,23 @@ var getV = cmdGet.Flag.Bool("v", false, "")
 var getC = cmdGet.Flag.Bool("c", false, "")
 var getU = cmdGet.Flag.Bool("u", false, "")
 
+func runGet(cmd *Command, args []string) {
+	fmt.Println("Running sdk get", args)
+
+	vcs, segments := matchVcsPath(args[1])
+	if vcs != nil {
+		fmt.Println(vcs.name, segments)
+	} else {
+		fmt.Println("vcs nil", segments)
+	}
+
+	// TODO construct path on local file system to where module will go
+	// TODO check for conflicts (if so, update?)
+	// TODO check for downloading or uploading
+}
+
 func init() {
 	cmdGet.Run = runGet
 }
 
-func runGet(cmd *Command, args []string) {
-	fmt.Println("Running sdk get")
-}
+
