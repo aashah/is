@@ -1,5 +1,10 @@
 Things that need to be considered
 
+- What to do about modules that belong to users that don't have a github?
+	- Should they still follow some convention like:
+		$INTERFACESDKROOT/sources/modules/{user}/{module}
+	- This concerns `is mv` not `is get`
+
 - An SDK version manager might be pretty cool, would help manage the
 	environment variables and maintaining backwards compatibility to a degree
 	- For now, best to rely on certain env variables
