@@ -35,9 +35,20 @@ var vcsList = []*vcsCmd{
 }
 
 type vcsPath struct {
+	code string
 	prefix string
-
+	name string
 }
+var vcsPaths = []*vcsPath{
+	// Github
+	{
+		code: "Git",
+		prefix: "github.com/",
+		name: "{user}",
+	},
+}
+
+// func matchVcsPath(modulePath
 
 // TODO: match package name with vcsCmd
 // TODO: Run the vcsCmd on a given directory
