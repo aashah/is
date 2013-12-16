@@ -18,9 +18,13 @@ call the check routine to ensure the module is structured correctly.
 
 See "go help check" to understand more on what is meant by the integrity of a
 module.
-    `
+    `,
 }
 
 func runBuild(cmd *Command, args []string) {
-    
+    fmt.Println("Running build")
+}
+
+func buildModule(dir string) error {
+    return nil
 }

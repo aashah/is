@@ -13,9 +13,9 @@ var cmdRun = &Command {
     Short: "Runs the interface SDK",
     Long: `
 Description
-    `
+    `,
 }
 
 func runRun(cmd *Command, args []string) {
-    
+    fmt.Println("Running run")
 }

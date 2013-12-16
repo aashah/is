@@ -16,9 +16,9 @@ mv will attempt to verify the integrity of a module by scanning for errors in
 the module's manifest file.
 
 TODO: add more mvs
-    `
+    `,
 }
 
 func runMv(cmd *Command, args []string) {
-    
+    fmt.Println("Running mv")
 }
