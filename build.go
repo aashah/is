@@ -9,7 +9,7 @@ func init() {
 }
 
 var cmdBuild = &Command {
-    UsageLine: "build -v [path to modules]",
+    UsageLine: "build [-v] [path to modules]",
     Short: "builds a given list of modules",
     Long: `
 Build will attempt to a compile a list of modules given that they are structured
@@ -25,6 +25,6 @@ func runBuild(cmd *Command, args []string) {
     fmt.Println("Running build")
 }
 
-func buildModule(dir string) error {
+func buildModule(dir string, verbose bool) error {
     return nil
 }

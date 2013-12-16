@@ -9,7 +9,7 @@ func init() {
 }
 
 var cmdRun = &Command {
-    UsageLine: "Run -v",
+    UsageLine: "Run [-v]",
     Short: "Runs the interface SDK",
     Long: `
 Description

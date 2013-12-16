@@ -9,11 +9,11 @@ func init() {
 }
 
 var cmdMv = &Command {
-    UsageLine: "mv -v [path to modules]",
-    Short: "mvs a given list of modules",
+    UsageLine: "mv [-v] [-b] [path to modules]",
+    Short: "mv moves pre-existing modules into the appropriate location",
     Long: `
-mv will attempt to verify the integrity of a module by scanning for errors in
-the module's manifest file.
+Moves pre-existing modules into the appropriate location. mv will also check
+the integrity of the module and attempt to build if the -b flag is set
 
 TODO: add more mvs
     `,
