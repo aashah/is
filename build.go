@@ -1,7 +1,10 @@
 package main
 
 import (
+    "errors"
     "fmt"
+    "os"
+    "path/filepath"
 )
 
 func init() {
@@ -22,9 +25,31 @@ module.
 }
 
 func runBuild(cmd *Command, args []string) {
-    fmt.Println("Running build")
+    for _, dir := range args {
+        // check validity of argument
+        fi, err := os.Stat(dir)
+        if err != nil {
+            fmt.Fprintf(os.Stderr, "is: could not find directory - %s\n", dir)
+            continue
+        }
+        if !fi.IsDir() {
+            fmt.Fprintf(os.Stderr, "is: found file, not directory - %s\n", dir)
+            continue
+        }
+
+        abs, err := filepath.Abs(dir)
+        if err != nil {
+
+            continue
+        }
+        err = buildModule(abs, *checkB)
+        if err != nil {
+            fmt.Fprintf(os.Stderr, "is: %s\n", err.Error())
+        }
+    }
 }
 
 func buildModule(dir string, verbose bool) error {
-    return nil
+    err := errors.New("unimplemented feature - build")
+    return err
 }

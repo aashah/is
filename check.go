@@ -1,6 +1,7 @@
 package main
 
 import (
+    "errors"
     "fmt"
     "os"
     "path/filepath"
@@ -40,12 +41,26 @@ func runCheck(cmd *Command, args []string) {
         }
 
         abs, err := filepath.Abs(dir)
-        if err == nil {
-            err = checkModuleIntegrity(abs, *checkB)
+        if err != nil {
+
+            continue
+        }
+        err = checkModuleIntegrity(abs, *checkB)
+        if err != nil {
+            fmt.Fprintf(os.Stderr, "is: %s\n", err.Error())
         }
     }
 }
 
+func checkIntegrityCache(dir string) bool {
+    return moduleIntegrityCache[dir]
+}
+
 func checkModuleIntegrity(dir string, verbose bool) error {
-    return nil
+    err := errors.New("unimplemented feature - chk")
+
+    if err == nil {
+        moduleIntegrityCache[dir] = true
+    }
+    return err
 }
