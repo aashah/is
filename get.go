@@ -23,6 +23,16 @@ building.
 By default, get will download the module. If the module already exists, get will
 update the package if possible.
 
+Example usages: 
+	"is get github.com/aashah/Pong": Downloads and checks the integrity of the
+	module located at github.com/aashah/Pong
+
+	"is get -b github.com/aashah/Pong": Downloads, checks the module, and builds
+	the module to be immediately used under the sdk
+
+	"is get -b github.com/aashah/Pong github.com/aashah/fractalModule": Downloads
+	several modules
+
 Flags:
 	-v [Verbose]: Prints detailed information on the status of get as it retrieves
 	and builds each module.
