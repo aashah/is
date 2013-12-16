@@ -5,9 +5,12 @@ import (
 )
 
 var cmdGet = &Command{
-	UsageLine: "get [module",
+	UsageLine: "get [-v verbose] [-c check/validate module] [modules]",
 	Short: "download and package modules",
 }
+
+var getV = cmdGet.Flag.Bool("v", false, "")
+var getC = cmdGet.Flag.Bool("c", false, "")
 
 func init() {
 	cmdGet.Run = runGet
