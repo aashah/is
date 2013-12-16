@@ -1,3 +1,22 @@
+Goal:
+
+Providing a user a clean way of working with modules. Since our primary focus
+has been simplicity on the side of the user, abstracting away unecessary details
+such as where modules are or how they get loaded, a few features of this cli
+program are:
+
+    get: The ability to get and build modules that reside in a version control
+        system
+
+    mv: Similar to get, but working with modules that pre-exist elsewhere on the
+        file system
+
+    run: Running the SDK in a simple way
+
+    build: Building a module
+
+    chk: Checking a module for how "complete" it is
+
 COMMAND LINE STRUCTURE:
 Prefix: is
 Subcommands: {
