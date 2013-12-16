@@ -49,46 +49,54 @@ var getV = cmdGet.Flag.Bool("v", false, "")
 var getB = cmdGet.Flag.Bool("b", false, "")
 
 func runGet(cmd *Command, args []string) {
-	// TODO foreach args, attempt to do all the following
-	// TODO refactor into function - checkPackage...etc
-	vcs := matchVcsPath(args[0])
-	if vcs == nil {
-		fmt.Println("VCS nil, not okay!")
-		return
+	for _, modulePath := range args {
+		info := matchVcsPath(modulePath)
+		if info == nil {
+			fmt.Println("VCS nil, not okay!")
+			continue
+		}
+		err := getModule(info)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "is: %s\n", err.Error())
+		}
 	}
+}
 
+func getModule(info *vcsInfo) error {
 	// TEST construct path on local file system to where module will go
 	sdkpath := os.Getenv("INTERFACESDKROOT")
 	targetPath := filepath.Join(sdkpath, "source", "modules")
-	for _, folder := range strings.Split(vcs.path, "/") {
+	for _, folder := range strings.Split(info.path, "/") {
 		targetPath = filepath.Join(targetPath, folder)
 	}
+
 	// TEST check for conflicts (if so, update?)
 	// TEST check for downloading or uploading
 	fi, err := os.Stat(targetPath)
 	if err != nil {
-		fmt.Println("Repo doesn't exist yet, lets download not update")
-		err = downloadModule(vcs, targetPath)
+		err = downloadModule(info, targetPath)
 	} else {
 		if !fi.IsDir() {
-			err = errors.New(fmt.Sprintf("is: found file, not directory: %s\n", fi.Name()))
+			err = errors.New(fmt.Sprintf("is: found file, not directory - %s\n", fi.Name()))
 		} else {
 			// already exists, let's update rather than download
-			fmt.Println(fi.Name(), "already exists, lets update!")
-			err = updateModule(vcs, targetPath)
+			err = updateModule(info, targetPath)
 		}
 	}
 
-	if err == nil {
-		// err = integrity of module
-		err = errors.New("is: incomplete validation of module. do not build yet")
-		if err != nil && *getB {
-			// attempt to build module
-		}
-	} else {
-		// error downloading/updating
-		fmt.Print(err)
+	if err != nil {
+		return err
 	}
+
+	err = checkModuleIntegrity(targetPath, *getV)
+	if err != nil {
+		return err
+	}
+
+	if *getB {
+		fmt.Println("Attempting to build")
+	}
+	return nil
 }
 
 func downloadModule(info *vcsInfo, targetPath string) error {
