@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"strings"
 	"regexp"
+	"strings"
 )
 
 func init() {
@@ -22,24 +22,24 @@ func init() {
 
 type vcsCmd struct {
 	name string
-	cmd string
+	cmd  string
 
 	createCmd string
 	updateCmd string
 }
 
 type vcsPath struct {
-	code string
+	code   string
 	prefix string
-	name string
-	re string
-	path string
-	repo string
+	name   string
+	re     string
+	path   string
+	repo   string
 	regexp *regexp.Regexp
 }
 
 type vcsInfo struct {
-	vcs *vcsCmd
+	vcs  *vcsCmd
 	path string
 	repo string
 }
@@ -55,7 +55,6 @@ func (v *vcsCmd) runCmd(dir string, cmdLine string, verbose bool, keyvals map[st
 	}
 
 	args := strings.Fields(cmdLine)
-
 
 	// TODO Check if v.cmd exists
 	if _, err := exec.LookPath(v.cmd); err != nil {
@@ -76,9 +75,9 @@ func (v *vcsCmd) runCmd(dir string, cmdLine string, verbose bool, keyvals map[st
 }
 
 func (v *vcsCmd) download(dir string, repo string, verbose bool) error {
-	keyvals := map[string]string {
+	keyvals := map[string]string{
 		"repo": repo,
-		"dir": dir,
+		"dir":  dir,
 	}
 	_, err := v.runCmd(dir, v.createCmd, verbose, keyvals)
 	return err
@@ -91,7 +90,7 @@ func (v *vcsCmd) update(dir string, verbose bool) error {
 
 var vcsGit = &vcsCmd{
 	name: "Git",
-	cmd: "git",
+	cmd:  "git",
 
 	createCmd: "clone {repo} {dir}",
 	updateCmd: "pull --ff-only",
@@ -104,11 +103,11 @@ var vcsList = []*vcsCmd{
 var vcsPaths = []*vcsPath{
 	// Github
 	{
-		code: "git",
+		code:   "git",
 		prefix: "github.com",
-		path: "{prefix}/{name}/{repo}",
-		repo: "git@{prefix}:{name}/{repo}.git",
-		re: `^(?P<prefix>github\.com)/(?P<name>[A-Za-z0-9_.\-]+)/(?P<repo>[A-Za-z0-9_.\-]+)(/[A-Za-z0-9_.\-]+)*$`,
+		path:   "{prefix}/{name}/{repo}",
+		repo:   "git@{prefix}:{name}/{repo}.git",
+		re:     `^(?P<prefix>github\.com)/(?P<name>[A-Za-z0-9_.\-]+)/(?P<repo>[A-Za-z0-9_.\-]+)(/[A-Za-z0-9_.\-]+)*$`,
 	},
 }
 
@@ -162,7 +161,7 @@ func matchVcsPath(modulePath string) *vcsInfo {
 func expand(list map[string]string, str string) string {
 	ret := str
 	for key, val := range list {
-		ret = strings.Replace(ret, "{" + key + "}", val, -1)
+		ret = strings.Replace(ret, "{"+key+"}", val, -1)
 	}
 	return ret
 }
@@ -171,4 +170,3 @@ func expand(list map[string]string, str string) string {
 // TODO: Run the vcsCmd on a given directory
 // - Check for conflicts (permissions, directory exists (do I need to only
 // update?))
-

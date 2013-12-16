@@ -14,7 +14,7 @@ func init() {
 
 var cmdGet = &Command{
 	UsageLine: "get [-v] [-b] [module paths]",
-	Short: "download and package modules",
+	Short:     "download and package modules",
 	Long: `
 Get downloads/updates modules as well as building the module for the interface
 sdk. Get will also check for errors in an individual module's structure before

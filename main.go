@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"flag"
+	"fmt"
 	"os"
 	"strings"
 )
@@ -18,8 +18,8 @@ type Command struct {
 
 	// Usage and short information on the command
 	UsageLine string
-	Short string
-	Long string
+	Short     string
+	Long      string
 
 	// Flags specific for this command
 	Flag flag.FlagSet
@@ -33,7 +33,6 @@ func (c *Command) Name() string {
 	}
 	return name
 }
-
 
 func (c *Command) Usage() {
 	fmt.Fprintf(os.Stderr, "usage: %s\n\n", c.UsageLine)
@@ -63,7 +62,7 @@ Available commands:
 func processHelp(helpCmd string) {
 	for _, cmd := range commands {
 		if cmd.Name() == helpCmd {
-			cmd.Usage();
+			cmd.Usage()
 			os.Exit(0)
 		}
 	}
@@ -111,5 +110,3 @@ is: INTERFACESDKROOT environment variable not set\n
 		}
 	}
 }
-
-
