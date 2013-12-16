@@ -24,3 +24,5 @@ Roadmap:
     mv: soon(tm)
     version: done
     run: soon(tm)
+    build: soon(tm)
+    check: soon(tm)

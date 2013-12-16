@@ -42,6 +42,10 @@ func (c *Command) Usage() {
 
 var commands = []*Command{
 	cmdGet,
+	cmdMv,
+	cmdBuild,
+	cmdCheck,
+	cmdRun,
 	cmdVersion,
 }
 
