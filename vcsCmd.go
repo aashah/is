@@ -26,6 +26,11 @@ var vcsList = []*vcsCmd{
 	vcsGit,
 }
 
+type vcsPath struct {
+	prefix string
+
+}
+
 // TODO: match package name with vcsCmd
 // TODO: Run the vcsCmd on a given directory
 // - Check for conflicts (permissions, directory exists (do I need to only
