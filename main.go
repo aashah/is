@@ -101,7 +101,7 @@ is: INTERFACESDKROOT environment variable not set\n
 	for _, cmd := range commands {
 		if cmd.Name() == args[0] {
 			cmd.Flag.Parse(args[1:])
-			cmd.Run(cmd, args)
+			cmd.Run(cmd, cmd.Flag.Args())
 			os.Exit(0)
 			return
 		}

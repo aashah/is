@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 var cmdGet = &Command{
@@ -34,17 +37,35 @@ var getU = cmdGet.Flag.Bool("u", false, "")
 
 func runGet(cmd *Command, args []string) {
 	fmt.Println("Running sdk get", args)
-
-	vcs, segments := matchVcsPath(args[1])
+	// TODO foreach args, attempt to do all the following
+	// TODO refactor into function - checkPackage...etc
+	vcs := matchVcsPath(args[0])
 	if vcs != nil {
-		fmt.Println(vcs.name, segments)
+		fmt.Println("VCS okay!")
 	} else {
-		fmt.Println("vcs nil", segments)
+		fmt.Println("vcs nil")
+		return
 	}
 
-	// TODO construct path on local file system to where module will go
-	// TODO check for conflicts (if so, update?)
-	// TODO check for downloading or uploading
+	// TEST construct path on local file system to where module will go
+	sdkpath := os.Getenv("INTERFACESDKROOT")
+	targetPath := filepath.Join(sdkpath, "source", "modules")
+	for _, folder := range strings.Split(vcs.repo, "/") {
+		targetPath = filepath.Join(targetPath, folder)
+	}
+	// TEST check for conflicts (if so, update?)
+	// TEST check for downloading or uploading
+	fi, err := os.Stat(targetPath)
+	if err != nil {
+		fmt.Println("Repo doesn't exist yet, lets download not update")
+		if *getU {
+			fmt.Println("They wanted to update...but that's not right")
+		}
+	}
+	if err == nil {
+		// already exists, let's update rather than download
+		fmt.Println(fi.Name(), "already exists, lets update!")
+	}
 }
 
 func init() {
