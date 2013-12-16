@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,11 +13,11 @@ func init() {
 }
 
 var cmdGet = &Command{
-	UsageLine: "get [-v] [-c] [module paths]",
+	UsageLine: "get [-v] [-b] [module paths]",
 	Short: "download and package modules",
 	Long: `
 Get downloads/updates modules as well as building the module for the interface
-sdk. Get also can check for errors in an individual modules' structure before
+sdk. Get will also check for errors in an individual module's structure before
 building.
 
 By default, get will download the module. If the module already exists, get will
@@ -26,13 +27,13 @@ Flags:
 	-v [Verbose]: Prints detailed information on the status of get as it retrieves
 	and builds each module.
 	
-	-c [Check/Validate]: Checks the integrity of the module. See {wiki_link} for
-	more information regarding what constitutes a valid module structure.
+	-b [Build]: Attempts to build the module and place it into the appropriate
+	directory.
 	`,
 }
 
 var getV = cmdGet.Flag.Bool("v", false, "")
-var getC = cmdGet.Flag.Bool("c", false, "")
+var getB = cmdGet.Flag.Bool("b", false, "")
 
 func runGet(cmd *Command, args []string) {
 	// TODO foreach args, attempt to do all the following
@@ -54,15 +55,26 @@ func runGet(cmd *Command, args []string) {
 	fi, err := os.Stat(targetPath)
 	if err != nil {
 		fmt.Println("Repo doesn't exist yet, lets download not update")
-		downloadModule(vcs, targetPath)
-	}	else {
+		err = downloadModule(vcs, targetPath)
+	} else {
 		if !fi.IsDir() {
-			fmt.Println("Not a directory!!!")
+			err = errors.New(fmt.Sprintf("is: found file, not directory: %s\n", fi.Name()))
 		} else {
 			// already exists, let's update rather than download
 			fmt.Println(fi.Name(), "already exists, lets update!")
-			updateModule(vcs, targetPath)
+			err = updateModule(vcs, targetPath)
 		}
+	}
+
+	if err == nil {
+		// err = integrity of module
+		err = errors.New("is: incomplete validation of module. do not build yet")
+		if err != nil && *getB {
+			// attempt to build module
+		}
+	} else {
+		// error downloading/updating
+		fmt.Print(err)
 	}
 }
 
