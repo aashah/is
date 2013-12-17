@@ -1,3 +1,14 @@
+Installing:
+Ensure you have golang installed onto your system. See {link here}
+
+You can get the code for this program by using:
+go get github.com/aashah/is
+
+Afterwards, installation is made possible with:
+go install github.com/aashah/is
+
+The executable binary `is` can be found at $GOPATH/bin
+
 Goal:
 
 Providing a user a clean way of working with modules. Since our primary focus
