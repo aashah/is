@@ -1,6 +1,8 @@
 package main
 
 import (
+    "github.com/aashah/glob"
+    // "encoding/xml"
     "errors"
     "fmt"
     "os"
@@ -18,10 +20,14 @@ var cmdCheck = &Command {
     UsageLine: "chk [-v] [path to modules]",
     Short: "Checks a given list of modules",
     Long: `
-Check will attempt to verify the integrity of a module by scanning for errors in
-the module's manifest file.
+Check will attempt to verify the integrity of a module primarily by looking at 
+the module's and the Interface SDK's manifest files.
 
-TODO: add more checks
+Module Manifest file:
+    - Ensure it's valid XML
+    - Ensure the class file exists
+    - The inputs are provided through the Hardware Manager's Manifest file
+    - All the key attributes to the manifest's data exist (package, class, uses-sdk)
     `,
 }
 
@@ -41,11 +47,32 @@ func runCheck(cmd *Command, args []string) {
         }
 
         abs, err := filepath.Abs(dir)
-        if err != nil {
+        // Try to find the manifest file
+        manifestGlob := "/**/manifest.xml"
+        
+        var manifest string
+        if matches, err := glob.Glob(abs, manifestGlob); err != nil {
+            var whichManifest int
 
+            switch {
+            case len(matches) <= 0:
+                err = errors.New("no manifest.xml found")
+            case len(matches) == 1:
+                whichManifest = 0
+            case len(matches) > 1:
+                whichManifest, err = promptEntryFromArray("Please pick a manifest file", matches)
+            }
+
+            manifest = matches[whichManifest]
+        }
+        // Error could be from globbing, number of found matches, or from
+        // the prompting of which manifest to pick
+        if err != nil {
             continue
         }
-        err = checkModuleIntegrity(abs, *checkB)
+
+        return
+        err = checkModuleIntegrity(abs, manifest, *checkB)
         if err != nil {
             fmt.Fprintf(os.Stderr, "is: %s\n", err.Error())
         }
@@ -56,11 +83,32 @@ func checkIntegrityCache(dir string) bool {
     return moduleIntegrityCache[dir]
 }
 
-func checkModuleIntegrity(dir string, verbose bool) error {
+func checkModuleIntegrity(moduleRoot string, manifest string, verbose bool) error {
     err := errors.New("unimplemented feature - chk")
 
     if err == nil {
-        moduleIntegrityCache[dir] = true
+        moduleIntegrityCache[moduleRoot] = true
     }
     return err
+}
+
+type Manifest struct {
+    pkg string `xml:"package, attr"`
+}
+
+func promptEntryFromArray(prompt string, entries []string) (idx int, e error) {
+    idx = -1
+    for idx < 0 || idx >= len(entries) {
+        // prompt each entry
+        fmt.Println(prompt)
+        for i, entry := range entries {
+            fmt.Printf("(%d) %s\n", i, entry)
+        }
+
+        _, err := fmt.Scanf("%d", &idx)
+        if err != nil {
+            return -1, err
+        }
+    }
+    return
 }
