@@ -88,7 +88,9 @@ func getModule(info *vcsInfo) error {
 		return err
 	}
 
-	err = checkModuleIntegrity(targetPath, *getV)
+	/*
+	// TODO need to find manifest file
+	// err = checkModuleIntegrity(targetPath, *getV)
 	if err != nil {
 		return err
 	}
@@ -99,6 +101,7 @@ func getModule(info *vcsInfo) error {
 			return err
 		}
 	}
+	*/
 	return nil
 }
 

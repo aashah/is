@@ -24,6 +24,8 @@ module.
     `,
 }
 
+var buildV = cmdBuild.Flag.Bool("v", false, "")
+
 func runBuild(cmd *Command, args []string) {
     for _, dir := range args {
         // check validity of argument
@@ -42,7 +44,7 @@ func runBuild(cmd *Command, args []string) {
 
             continue
         }
-        err = buildModule(abs, *checkB)
+        err = buildModule(abs, *buildV)
         if err != nil {
             fmt.Fprintf(os.Stderr, "is: %s\n", err.Error())
         }
@@ -53,3 +55,6 @@ func buildModule(dir string, verbose bool) error {
     err := errors.New("unimplemented feature - build")
     return err
 }
+
+// Need a system for attempting to interpret the structure of the directory
+// and how best to build it

@@ -1,7 +1,6 @@
 package main
 
 import (
-    "github.com/aashah/glob"
     // "encoding/xml"
     "errors"
     "fmt"
@@ -28,10 +27,16 @@ Module Manifest file:
     - Ensure the class file exists
     - The inputs are provided through the Hardware Manager's Manifest file
     - All the key attributes to the manifest's data exist (package, class, uses-sdk)
+
+Flags:
+    -v [Verbose]:
+    -q [Quick]: Uses the first option rather than prompting the user on how to
+    proceed.
     `,
 }
 
-var checkB = cmdCheck.Flag.Bool("b", false, "")
+var checkV = cmdCheck.Flag.Bool("v", false, "")
+var checkQ = cmdCheck.Flag.Bool("q", false, "")
 
 func runCheck(cmd *Command, args []string) {
     for _, dir := range args {
@@ -47,32 +52,22 @@ func runCheck(cmd *Command, args []string) {
         }
 
         abs, err := filepath.Abs(dir)
-        // Try to find the manifest file
-        manifestGlob := "/**/manifest.xml"
         
-        var manifest string
-        if matches, err := glob.Glob(abs, manifestGlob); err != nil {
-            var whichManifest int
+        fmt.Println("Finding manifest...")
+        // Try to find the manifest file
+        manifest, err := findFileInsideModulePackage(abs, "**/manifest.xml", *checkQ, *checkV)
 
-            switch {
-            case len(matches) <= 0:
-                err = errors.New("no manifest.xml found")
-            case len(matches) == 1:
-                whichManifest = 0
-            case len(matches) > 1:
-                whichManifest, err = promptEntryFromArray("Please pick a manifest file", matches)
-            }
-
-            manifest = matches[whichManifest]
-        }
         // Error could be from globbing, number of found matches, or from
         // the prompting of which manifest to pick
         if err != nil {
+            fmt.Println(err)
             continue
         }
 
+        fmt.Println("Manifest", manifest)
+
         return
-        err = checkModuleIntegrity(abs, manifest, *checkB)
+        err = checkModuleIntegrity(abs, manifest, *checkV)
         if err != nil {
             fmt.Fprintf(os.Stderr, "is: %s\n", err.Error())
         }
@@ -87,28 +82,11 @@ func checkModuleIntegrity(moduleRoot string, manifest string, verbose bool) erro
     err := errors.New("unimplemented feature - chk")
 
     if err == nil {
-        moduleIntegrityCache[moduleRoot] = true
+        moduleIntegrityCache[moduleRoot] = true 
     }
     return err
 }
 
 type Manifest struct {
     pkg string `xml:"package, attr"`
-}
-
-func promptEntryFromArray(prompt string, entries []string) (idx int, e error) {
-    idx = -1
-    for idx < 0 || idx >= len(entries) {
-        // prompt each entry
-        fmt.Println(prompt)
-        for i, entry := range entries {
-            fmt.Printf("(%d) %s\n", i, entry)
-        }
-
-        _, err := fmt.Scanf("%d", &idx)
-        if err != nil {
-            return -1, err
-        }
-    }
-    return
 }
