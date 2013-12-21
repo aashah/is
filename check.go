@@ -119,13 +119,8 @@ func loadModuleManifest(manifestPath string) (moduleManifest *xmlModuleManifest,
     totalSize := fiStat.Size()
     raw = make([]byte, fiStat.Size())
 
-    bytesRead = 0
-    for bytesRead < totalSize {
-        var n int
-        if n, err = fi.Read(raw); err != nil {
-            break
-        }
-        bytesRead += int64(n)
+    if _, err = fi.Read(raw); err != nil {
+        return nil, err
     }
 
     if bytesRead != totalSize {
@@ -134,10 +129,6 @@ func loadModuleManifest(manifestPath string) (moduleManifest *xmlModuleManifest,
 
     err = xml.Unmarshal(raw, &moduleManifest)
     return moduleManifest, err
-}
-
-func readNBytes(r *io.Reader) (raw []byte, err error) {
-    return nil, nil
 }
 
 func printManifest(manifest *xmlModuleManifest) {
