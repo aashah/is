@@ -97,9 +97,8 @@ func main() {
 		os.Exit(1)
 	} else if strings.HasPrefix(sdkpath, "~") {
 		// check for invalid path for the environment variable
-			fmt.Fprintf(os.Stderr, `is: INTERFACESDKROOT can not start with shell metacharacter '~': %q\n`, sdkpath)
-			os.Exit(1)
-		}
+		fmt.Fprintf(os.Stderr, `is: INTERFACESDKROOT can not start with shell metacharacter '~': %q\n`, sdkpath)
+		os.Exit(1)
 	}
 
 	for _, cmd := range commands {
@@ -107,7 +106,6 @@ func main() {
 			cmd.Flag.Parse(args[1:])
 			cmd.Run(cmd, cmd.Flag.Args())
 			os.Exit(0)
-			return
 		}
 	}
 }

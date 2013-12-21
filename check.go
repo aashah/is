@@ -1,7 +1,7 @@
 package main
 
 import (
-    // "encoding/xml"
+    "encoding/xml"
     "errors"
     "fmt"
     "os"
@@ -77,15 +77,53 @@ func checkIntegrityCache(dir string) bool {
     return moduleIntegrityCache[dir]
 }
 
-func checkModuleIntegrity(moduleRoot string, manifest string, verbose bool) error {
-    err := errors.New("unimplemented feature - chk")
+func checkModuleIntegrity(moduleRoot string, manifestPath string, verbose bool) error {
+    fi, err := os.Open(manifestPath)
+    if err != nil {
+        return err
+    }
+    defer fi.Close()
 
+    fiStat, err := fi.Stat()
+    if err != nil {
+        return err
+    }
+
+    var raw []byte
+    raw = make([]byte, fiStat.Size())
+    _, err = fi.Read(raw)
+    if err != nil {
+        return err
+    }
+    // manifest := &xmlManifest{}
+    manifest := xmlManifest{}
+    xml.Unmarshal(raw, &manifest)
+    
+    printManifest(manifest)
+
+    // verify
+
+    err = errors.New("unimplemented feature - chk")
     if err == nil {
         moduleIntegrityCache[moduleRoot] = true 
     }
     return err
 }
 
-type Manifest struct {
-    pkg string `xml:"package, attr"`
+func printManifest(manifest *xmlManifest) {
+    fmt.Printf("Package: %q\n", manifest.Package)
+    fmt.Printf("Class: %q\n", manifest.Class)
+
+    for _, sdk := range manifest.Sdks {
+        fmt.Printf("Min: %q\nTarget: %q\n", sdk.Min, sdk.Target)
+    }
+
+    for _, module := range manifest.Modules {
+        fmt.Printf("Icon: %q\nTitle: %q\nAuthor: %q\nVersion: %q\n",
+            module.Icon, module.Title, module.Author, module.Version)
+        fmt.Println("Inputs:")
+        for _, input := range module.Inputs {
+            fmt.Println("-", input.InputType)
+        }
+    }
 }
