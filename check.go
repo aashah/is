@@ -56,7 +56,7 @@ func runCheck(cmd *Command, args []string) {
         abs, err := filepath.Abs(dir)
 
         // Try to find the manifest file
-        manifest, err := findFileInsideModulePackage(abs, "**/manifest.xml", *checkQ, *checkV)
+        moduleManifest, err := findFileInsideModulePackage(abs, "**/manifest.xml", *checkQ, *checkV)
 
         // Error could be from globbing, number of found matches, or from
         // the prompting of which manifest to pick
@@ -65,10 +65,10 @@ func runCheck(cmd *Command, args []string) {
         }
 
         if *checkV {
-            fmt.Fprintf(os.Stdout, "[info] is: using manifest.xml - %s\n", manifest)
+            fmt.Fprintf(os.Stdout, "[info] is: using manifest.xml - %s\n", moduleManifest)
         }
 
-        valid, err = checkModuleIntegrity(abs, manifest, *checkV)
+        valid, err = checkModuleIntegrity(abs, moduleManifest, *checkV)
         if err != nil {
             fmt.Fprintf(os.Stderr, "is: %s\n", err.Error())
         }
@@ -81,16 +81,20 @@ func checkIntegrityCache(dir string) bool {
     return moduleIntegrityCache[dir]
 }
 
-func checkModuleIntegrity(moduleRoot string, manifestPath string, verbose bool) (valid bool, err error) {
-    // var hardwareManagerManifest *xmlHWManifest
+func checkModuleIntegrity(moduleRoot string, manifestPath string, verbose bool) (valid bool, err error) {    
+    var hardwareManifest *xmlHardwareManifest
     var moduleManifest *xmlModuleManifest
 
     if moduleManifest, err = loadModuleManifest(manifestPath); err != nil {
         return false, err
     }
-    printManifest(moduleManifest)
+    printModuleManifest(moduleManifest)
 
-    // verify
+    if hardwareManifest, err = loadHardwareManagerManifest(); err != nil {
+        return false, err
+    }
+
+    printHardwareManifest(hardwareManifest)
 
     err = errors.New("unimplemented feature - chk")
     if err == nil {
@@ -106,7 +110,33 @@ func loadModuleManifest(manifestPath string) (moduleManifest *xmlModuleManifest,
         err = xml.Unmarshal(raw, &moduleManifest)
     }
 
-    return moduleManifest, err
+    return
+}
+
+func loadHardwareManagerManifest() (hwManifest *xmlHardwareManifest, err error) {
+    var sdkpath, hwManagerManifestPath string
+    var raw []byte
+
+    if sdkpath = os.Getenv("INTERFACESDKROOT"); len(sdkpath) == 0 {
+        return nil, errors.New("INTERFACESDKROOT env variable not set")
+    }
+
+    sdkpath = filepath.Join(sdkpath, "source", "interfaceSDK")
+
+    // find hw manager manifest
+    if hwManagerManifestPath, err = findFileInsideModulePackage(sdkpath, "**/hardware_manager_manifest.xml", *checkQ, *checkV); err != nil {
+        return nil, err
+    }
+
+    if raw, err = readFile(hwManagerManifestPath); err == nil {
+        err = xml.Unmarshal(raw, &hwManifest)
+    }
+
+    if err != nil {
+        return nil, err
+    }
+
+    return
 }
 
 func readFile(path string) (data []byte, err error) {
@@ -133,7 +163,7 @@ func readFile(path string) (data []byte, err error) {
     return raw, nil
 }
 
-func printManifest(manifest *xmlModuleManifest) {
+func printModuleManifest(manifest *xmlModuleManifest) {
     fmt.Printf("Package: %q\n", manifest.Package)
     fmt.Printf("Class: %q\n", manifest.Class)
 
@@ -151,7 +181,26 @@ func printManifest(manifest *xmlModuleManifest) {
     }
 }
 
-type xmlHWManifest struct {
+func printHardwareManifest(manifest *xmlHardwareManifest) {
+    fmt.Println("Printing hardware manager manifest")
+
+    fmt.Println("-----------------")
+    for _, support := range manifest.Functionalities {
+        fmt.Printf("Name: %q\nInterface%q\n", support.Name, support.Interface)
+    }
+
+    fmt.Println("-----------------")
+
+    for _, device := range manifest.Devices {
+        fmt.Printf("Name: %q\nDriver: %q\n", device.Name, device.Driver)
+        fmt.Println("SUPPORTS:")
+        for _, support := range device.Provides {
+            fmt.Println("-", support.Name)
+        }
+    }
+}
+
+type xmlHardwareManifest struct {
     XMLName xml.Name `xml:"manifest"`
     Functionalities []*xmlSupport `xml:"functionalities>supports"`
     Devices []*xmlDevice `xml:"devices>device"`
@@ -167,4 +216,10 @@ type xmlDevice struct {
     XMLName xml.Name `xml:"device"`
     Name string `xml:"name,attr"`
     Driver string `xml:"driver,attr"`
+    Provides []*xmlDeviceSupport `xml:"provides"`
+}
+
+type xmlDeviceSupport struct {
+    XMLName xml.Name `xml:"provides"`
+    Name string `xml:"name,attr"`
 }
