@@ -52,21 +52,20 @@ func runCheck(cmd *Command, args []string) {
         }
 
         abs, err := filepath.Abs(dir)
-        
-        fmt.Println("Finding manifest...")
+
         // Try to find the manifest file
         manifest, err := findFileInsideModulePackage(abs, "**/manifest.xml", *checkQ, *checkV)
 
         // Error could be from globbing, number of found matches, or from
         // the prompting of which manifest to pick
         if err != nil {
-            fmt.Println(err)
             continue
         }
 
-        fmt.Println("Manifest", manifest)
+        if *checkV {
+            fmt.Fprintf(os.Stdout, "[info] is: using manifest.xml - %s\n", manifest)
+        }
 
-        return
         err = checkModuleIntegrity(abs, manifest, *checkV)
         if err != nil {
             fmt.Fprintf(os.Stderr, "is: %s\n", err.Error())

@@ -90,18 +90,15 @@ func main() {
 		}
 	}
 
-	// check if we have the correct environmetn variables
+	// check if we have the correct environment variables
 	sdkpath := os.Getenv("INTERFACESDKROOT")
 	if len(sdkpath) == 0 {
-		fmt.Fprintf(os.Stderr, `
-is: INTERFACESDKROOT environment variable not set\n
-		`)
-		os.Exit(0)
-	} else {
+		fmt.Fprintln(os.Stderr, "is: INTERFACESDKROOT environment variable not set")
+		os.Exit(1)
+	} else if strings.HasPrefix(sdkpath, "~") {
 		// check for invalid path for the environment variable
-		if strings.HasPrefix(sdkpath, "~") {
-			fmt.Fprintf(os.Stderr, `is: INTERFACESDKROOT can not start with shell
-			metacharacter '~': %q\n`, sdkpath)
+			fmt.Fprintf(os.Stderr, `is: INTERFACESDKROOT can not start with shell metacharacter '~': %q\n`, sdkpath)
+			os.Exit(1)
 		}
 	}
 

@@ -4,6 +4,7 @@ import (
     "github.com/aashah/glob"
     "errors"
     "fmt"
+    "os"
 )
 
 func findFileInsideModulePackage(moduleRoot string, pattern string, quick bool, verbose bool) (string, error) {
@@ -11,7 +12,14 @@ func findFileInsideModulePackage(moduleRoot string, pattern string, quick bool, 
     var file string
     matches, err := glob.Glob(moduleRoot, pattern);
 
+
     if err == nil {
+        if verbose {
+            fmt.Fprintf(os.Stdout, "[info] is: found %d matches:\n", len(matches))
+            for i, match := range matches {
+                fmt.Fprintf(os.Stdout, "[info] is: (%d) %s:\n", i, match)
+            }
+        }
         var whichFile int
 
         switch {

@@ -40,7 +40,7 @@ Flags:
 	-b [Build]: Attempts to build the module and place it into the appropriate
 	directory.
 
-See "go help check" to understand more on what is meant by the integrity of a
+See "go help chk" to understand more on what is meant by the integrity of a
 module.
 	`,
 }
