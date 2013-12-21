@@ -4,6 +4,7 @@ import (
     "encoding/xml"
     "errors"
     "fmt"
+    "io"
     "os"
     "path/filepath"
 )
@@ -82,7 +83,7 @@ func checkIntegrityCache(dir string) bool {
 }
 
 func checkModuleIntegrity(moduleRoot string, manifestPath string, verbose bool) (valid bool, err error) {
-    // TODO load hw manager manifest
+    // var hardwareManagerManifest *xmlHWManifest
     var moduleManifest *xmlModuleManifest
 
     if moduleManifest, err = loadModuleManifest(manifestPath); err != nil {
@@ -113,13 +114,30 @@ func loadModuleManifest(manifestPath string) (moduleManifest *xmlModuleManifest,
     }
 
     var raw []byte
+    var bytesRead int64
+
+    totalSize := fiStat.Size()
     raw = make([]byte, fiStat.Size())
-    if _, err = fi.Read(raw); err != nil {
-        return nil, err
+
+    bytesRead = 0
+    for bytesRead < totalSize {
+        var n int
+        if n, err = fi.Read(raw); err != nil {
+            break
+        }
+        bytesRead += int64(n)
+    }
+
+    if bytesRead != totalSize {
+        return nil, errors.New("File not read completely")
     }
 
     err = xml.Unmarshal(raw, &moduleManifest)
     return moduleManifest, err
+}
+
+func readNBytes(r *io.Reader) (raw []byte, err error) {
+    return nil, nil
 }
 
 func printManifest(manifest *xmlModuleManifest) {
@@ -138,4 +156,22 @@ func printManifest(manifest *xmlModuleManifest) {
             fmt.Println("-", input.InputType)
         }
     }
+}
+
+type xmlHWManifest struct {
+    XMLName xml.Name `xml:"manifest"`
+    Functionalities []*xmlSupport `xml:"functionalities>supports"`
+    Devices []*xmlDevice `xml:"devices>device"`
+}
+
+type xmlSupport struct {
+    XMLName xml.Name `xml:"supports"`
+    Name string `xml:"name,attr"`
+    Interface string `xml:"interface,attr"`
+}
+
+type xmlDevice struct {
+    XMLName xml.Name `xml:"device"`
+    Name string `xml:"name,attr"`
+    Driver string `xml:"driver,attr"`
 }
