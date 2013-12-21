@@ -8,7 +8,7 @@ import (
     "os"
 )
 
-type xmlManifest struct {
+type xmlModuleManifest struct {
     XMLName xml.Name `xml:"manifest"`
     Package string `xml:"package,attr"`
     Class string `xml:"class,attr"`

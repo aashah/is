@@ -24,7 +24,7 @@ the module's and the Interface SDK's manifest files.
 
 Module Manifest file:
     - Ensure it's valid XML
-    - Ensure the class file exists
+    - Ensure the package dir/class file exists
     - The inputs are provided through the Hardware Manager's Manifest file
     - All the key attributes to the manifest's data exist (package, class, uses-sdk)
 
@@ -40,6 +40,8 @@ var checkQ = cmdCheck.Flag.Bool("q", false, "")
 
 func runCheck(cmd *Command, args []string) {
     for _, dir := range args {
+        var valid bool
+
         // check validity of argument
         fi, err := os.Stat(dir)
         if err != nil {
@@ -66,10 +68,12 @@ func runCheck(cmd *Command, args []string) {
             fmt.Fprintf(os.Stdout, "[info] is: using manifest.xml - %s\n", manifest)
         }
 
-        err = checkModuleIntegrity(abs, manifest, *checkV)
+        valid, err = checkModuleIntegrity(abs, manifest, *checkV)
         if err != nil {
             fmt.Fprintf(os.Stderr, "is: %s\n", err.Error())
         }
+
+        fmt.Println("IS VALID:", valid)
     }
 }
 
@@ -77,29 +81,14 @@ func checkIntegrityCache(dir string) bool {
     return moduleIntegrityCache[dir]
 }
 
-func checkModuleIntegrity(moduleRoot string, manifestPath string, verbose bool) error {
-    fi, err := os.Open(manifestPath)
-    if err != nil {
-        return err
-    }
-    defer fi.Close()
+func checkModuleIntegrity(moduleRoot string, manifestPath string, verbose bool) (valid bool, err error) {
+    // TODO load hw manager manifest
+    var moduleManifest *xmlModuleManifest
 
-    fiStat, err := fi.Stat()
-    if err != nil {
-        return err
+    if moduleManifest, err = loadModuleManifest(manifestPath); err != nil {
+        return false, err
     }
-
-    var raw []byte
-    raw = make([]byte, fiStat.Size())
-    _, err = fi.Read(raw)
-    if err != nil {
-        return err
-    }
-    // manifest := &xmlManifest{}
-    manifest := xmlManifest{}
-    xml.Unmarshal(raw, &manifest)
-    
-    printManifest(manifest)
+    printManifest(moduleManifest)
 
     // verify
 
@@ -107,10 +96,33 @@ func checkModuleIntegrity(moduleRoot string, manifestPath string, verbose bool) 
     if err == nil {
         moduleIntegrityCache[moduleRoot] = true 
     }
-    return err
+    return false, err
 }
 
-func printManifest(manifest *xmlManifest) {
+func loadModuleManifest(manifestPath string) (moduleManifest *xmlModuleManifest, err error) {
+    var fi *os.File
+    var fiStat os.FileInfo
+
+    if fi, err = os.Open(manifestPath); err != nil {
+        return nil, err
+    }
+    defer fi.Close()
+
+    if fiStat, err = fi.Stat(); err != nil {
+        return nil, err
+    }
+
+    var raw []byte
+    raw = make([]byte, fiStat.Size())
+    if _, err = fi.Read(raw); err != nil {
+        return nil, err
+    }
+
+    err = xml.Unmarshal(raw, &moduleManifest)
+    return moduleManifest, err
+}
+
+func printManifest(manifest *xmlModuleManifest) {
     fmt.Printf("Package: %q\n", manifest.Package)
     fmt.Printf("Class: %q\n", manifest.Class)
 
