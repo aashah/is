@@ -2,10 +2,49 @@ package main
 
 import (
     "github.com/aashah/glob"
+    "encoding/xml"
     "errors"
     "fmt"
     "os"
 )
+
+type xmlManifest struct {
+    XMLName xml.Name `xml:"manifest"`
+    Package string `xml:"package,attr"`
+    Class string `xml:"class,attr"`
+
+    Sdks []*xmlSDK `xml:"uses-sdk"`
+    Modules []*xmlModule `xml:"module"`
+}
+
+type xmlSDK struct {
+    XMLName xml.Name `xml:"uses-sdk"`
+
+    Min string `xml:"minSdkVersion,attr"`
+    Target string `xml:"targetSdkVersion,attr"`
+}
+
+type xmlModule struct {
+    XMLName xml.Name `xml:"module"`
+
+    Icon string `xml:"icon,attr"`
+    Title string `xml:"title,attr"`
+    Author string `xml:"author,attr"`
+    Version string `xml:"version,attr"`
+
+    Inputs []*xmlInput `xml:"inputs>input"`
+    Requires []*xmlRequire `xml:"requires-module"`
+}
+
+type xmlInput struct {
+    XMLName xml.Name `xml:"input"`
+
+    InputType string `xml:"input-type,attr"`
+}
+
+type xmlRequire struct {
+    XMLName xml.Name `xml:"requires-module"`
+}
 
 func findFileInsideModulePackage(moduleRoot string, pattern string, quick bool, verbose bool) (string, error) {
 
