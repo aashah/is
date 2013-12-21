@@ -4,7 +4,6 @@ import (
     "encoding/xml"
     "errors"
     "fmt"
-    "io"
     "os"
     "path/filepath"
 )
@@ -101,10 +100,20 @@ func checkModuleIntegrity(moduleRoot string, manifestPath string, verbose bool) 
 }
 
 func loadModuleManifest(manifestPath string) (moduleManifest *xmlModuleManifest, err error) {
+    var raw []byte
+
+    if raw, err = readFile(manifestPath); err == nil {
+        err = xml.Unmarshal(raw, &moduleManifest)
+    }
+
+    return moduleManifest, err
+}
+
+func readFile(path string) (data []byte, err error) {
     var fi *os.File
     var fiStat os.FileInfo
 
-    if fi, err = os.Open(manifestPath); err != nil {
+    if fi, err = os.Open(path); err != nil {
         return nil, err
     }
     defer fi.Close()
@@ -114,21 +123,14 @@ func loadModuleManifest(manifestPath string) (moduleManifest *xmlModuleManifest,
     }
 
     var raw []byte
-    var bytesRead int64
 
-    totalSize := fiStat.Size()
     raw = make([]byte, fiStat.Size())
 
     if _, err = fi.Read(raw); err != nil {
         return nil, err
     }
 
-    if bytesRead != totalSize {
-        return nil, errors.New("File not read completely")
-    }
-
-    err = xml.Unmarshal(raw, &moduleManifest)
-    return moduleManifest, err
+    return raw, nil
 }
 
 func printManifest(manifest *xmlModuleManifest) {
