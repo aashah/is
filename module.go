@@ -23,14 +23,16 @@ func findFileInsideModulePackage(moduleRoot string, pattern string, quick bool, 
         var whichFile int
 
         switch {
-        case len(matches) >= 0 && quick:
-            whichFile = 0
         case len(matches) <= 0:
             whichFile, err = -1, errors.New(fmt.Sprintf("no matches found - %s\n", pattern))
         case len(matches) == 1:
             whichFile = 0
         case len(matches) > 1:
-            whichFile, err = promptEntryFromArray("Please pick a file file", matches)
+            if quick {
+                whichFile = 0
+            } else {
+                whichFile, err = promptEntryFromArray("Please pick a file file", matches)            
+            }
         }
 
         if err != nil {
