@@ -113,23 +113,23 @@ func loadModuleManifest(manifestPath string) (moduleManifest *xmlModuleManifest,
     return
 }
 
-func loadHardwareManagerManifest() (hwManifest *xmlHardwareManifest, err error) {
-    var sdkpath, hwManagerManifestPath string
+func loadHardwareManagerManifest() (hardwareManifest *xmlHardwareManifest, err error) {
+    var sdkPath, hardwareManifestPath string
     var raw []byte
 
-    if sdkpath = os.Getenv("INTERFACESDKROOT"); len(sdkpath) == 0 {
+    if sdkPath = os.Getenv("INTERFACESDKROOT"); len(sdkPath) == 0 {
         return nil, errors.New("INTERFACESDKROOT env variable not set")
     }
 
-    sdkpath = filepath.Join(sdkpath, "source", "interfaceSDK")
+    sdkPath = filepath.Join(sdkPath, "source", "interfaceSDK")
 
     // find hw manager manifest
-    if hwManagerManifestPath, err = findFileInsideModulePackage(sdkpath, "**/hardware_manager_manifest.xml", *checkQ, *checkV); err != nil {
+    if hwManagerManifestPath, err = findFileInsideModulePackage(sdkPath, "**/hardware_manager_manifest.xml", *checkQ, *checkV); err != nil {
         return nil, err
     }
 
     if raw, err = readFile(hwManagerManifestPath); err == nil {
-        err = xml.Unmarshal(raw, &hwManifest)
+        err = xml.Unmarshal(raw, &hardwareManifest)
     }
 
     if err != nil {
