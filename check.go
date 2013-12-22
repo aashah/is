@@ -72,26 +72,24 @@ func checkModuleIntegrity(moduleRoot string, verbose bool) (valid bool, err erro
     var hardwareManifest *xmlHardwareManifest
     var moduleManifest *xmlModuleManifest
 
-    if moduleManifest, err = loadModuleManifest(moduleRoot); err != nil {
+    if moduleManifest, err = loadModuleManifest(moduleRoot, verbose); err != nil {
         return false, err
     }
 
-    printModuleManifest(moduleManifest)
-
-    if hardwareManifest, err = loadHardwareManagerManifest(); err != nil {
+    if hardwareManifest, err = loadHardwareManagerManifest(verbose); err != nil {
         return false, err
     }
-
-    printHardwareManifest(hardwareManifest)
 
     err = errors.New("unimplemented feature - chk")
     if err == nil {
+        fmt.Println(moduleManifest)
+        fmt.Println(hardwareManifest)
         moduleIntegrityCache[moduleRoot] = true 
     }
     return false, err
 }
 
-func loadModuleManifest(moduleRoot string) (moduleManifest *xmlModuleManifest, err error) {
+func loadModuleManifest(moduleRoot string, verbose bool) (moduleManifest *xmlModuleManifest, err error) {
     var moduleManifestPath string
     var raw []byte
 
@@ -99,14 +97,26 @@ func loadModuleManifest(moduleRoot string) (moduleManifest *xmlModuleManifest, e
         return nil, err
     }
 
+    if verbose {
+        fmt.Printf("[info] is: using module manifest.xml - %s\n", moduleManifestPath)
+    }
+
     if raw, err = readFile(moduleManifestPath); err == nil {
         err = xml.Unmarshal(raw, &moduleManifest)
+    }
+
+    if err != nil {
+        return nil, err
+    }
+
+    if verbose {
+        printModuleManifest(moduleManifest)
     }
 
     return
 }
 
-func loadHardwareManagerManifest() (hardwareManifest *xmlHardwareManifest, err error) {
+func loadHardwareManagerManifest(verbose bool) (hardwareManifest *xmlHardwareManifest, err error) {
     var sdkPath, hardwareManifestPath string
     var raw []byte
 
@@ -121,12 +131,20 @@ func loadHardwareManagerManifest() (hardwareManifest *xmlHardwareManifest, err e
         return nil, err
     }
 
+    if verbose {
+        fmt.Printf("[info] is: using hardware_manager_manifest.xml - %s\n", hardwareManifestPath)
+    }
+
     if raw, err = readFile(hardwareManifestPath); err == nil {
         err = xml.Unmarshal(raw, &hardwareManifest)
     }
 
     if err != nil {
         return nil, err
+    }
+
+    if verbose {
+        printHardwareManifest(hardwareManifest)
     }
 
     return
