@@ -82,14 +82,8 @@ func checkModuleIntegrity(moduleRoot string, verbose bool) (valid bool, err erro
      * - inputs in module manifest can be found in hardware manager manifest
      * - key attributes exist (with verbose display optional ones that aren't provided)
      */
-
-    err = errors.New("unimplemented feature - chk")
-    if err == nil {
-        fmt.Println(moduleManifest)
-        fmt.Println(hardwareManifest)
-        return true, nil
-    }
-    return false, err
+    
+    return moduleManifest.isValid(hardwareManifest)
 }
 
 func loadModuleManifest(moduleRoot string, verbose bool) (moduleManifest *xmlModuleManifest, err error) {
@@ -113,7 +107,7 @@ func loadModuleManifest(moduleRoot string, verbose bool) (moduleManifest *xmlMod
     }
 
     if verbose {
-        printModuleManifest(moduleManifest)
+        moduleManifest.print()
     }
 
     return
@@ -175,24 +169,6 @@ func readFile(path string) (data []byte, err error) {
     }
 
     return raw, nil
-}
-
-func printModuleManifest(manifest *xmlModuleManifest) {
-    fmt.Printf("Package: %q\n", manifest.Package)
-    fmt.Printf("Class: %q\n", manifest.Class)
-
-    for _, sdk := range manifest.Sdks {
-        fmt.Printf("Min: %q\nTarget: %q\n", sdk.Min, sdk.Target)
-    }
-
-    for _, module := range manifest.Modules {
-        fmt.Printf("Icon: %q\nTitle: %q\nAuthor: %q\nVersion: %q\n",
-            module.Icon, module.Title, module.Author, module.Version)
-        fmt.Println("Inputs:")
-        for _, input := range module.Inputs {
-            fmt.Println("-", input.InputType)
-        }
-    }
 }
 
 func printHardwareManifest(manifest *xmlHardwareManifest) {

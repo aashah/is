@@ -13,8 +13,8 @@ type xmlModuleManifest struct {
     Package string `xml:"package,attr"`
     Class string `xml:"class,attr"`
 
-    Sdks []*xmlSDK `xml:"uses-sdk"`
-    Modules []*xmlModule `xml:"module"`
+    SDK xmlSDK `xml:"uses-sdk"`
+    Module xmlModule `xml:"module"`
 }
 
 type xmlSDK struct {
@@ -44,6 +44,34 @@ type xmlInput struct {
 
 type xmlRequire struct {
     XMLName xml.Name `xml:"requires-module"`
+}
+
+func (x *xmlModuleManifest) isValid(hardwareManifest *xmlHardwareManifest) (valid bool, err error) {
+    switch {
+        case x.Package == "":
+            return false, errors.New("manifest>package attribute not set")
+        case x.Class == "":
+            return false, errors.New("manifest>class attribute not set")
+        case x.SDK == (xmlSDK{}):
+            return false, errors.New("manifest>uses-sdk not provided")
+    }
+
+    return true, nil
+}
+
+func (x *xmlModuleManifest) print() {
+    fmt.Printf("Package: %q\n", x.Package)
+    fmt.Printf("Class: %q\n", x.Class)
+
+    fmt.Printf("Min: %q\nTarget: %q\n", x.SDK.Min, x.SDK.Target)
+
+    module := x.Module
+    fmt.Printf("Icon: %q\nTitle: %q\nAuthor: %q\nVersion: %q\n",
+        module.Icon, module.Title, module.Author, module.Version)
+    fmt.Println("Inputs:")
+    for _, input := range module.Inputs {
+        fmt.Println("-", input.InputType)
+    }
 }
 
 func findFileInsideModulePackage(moduleRoot string, pattern string, quick bool, verbose bool) (string, error) {
