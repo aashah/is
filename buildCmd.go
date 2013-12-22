@@ -12,7 +12,7 @@ func init() {
     fmt.Println("Loading build helper file")
 }
 
-type findTarget func() string
+type findTarget func(matches[] string) string
 
 type buildCmd struct {
     name string
@@ -28,21 +28,11 @@ type buildType struct {
 }
 
 var buildList = []*buildCmd{
-    {
-        name: "Maven",
-        cmd: "mvn",
-        buildCmd: "clean package",
-    },
+    mavenBuildCmd,
 }
 
 var buildTypes = []*buildType{
-    {
-        name: "Maven",
-        files: []string{
-            "pom.xml",
-        },
-        getTarget: FindMavenTarget,
-    },
+    mavenBuildType,
 }
 
 func (b *buildCmd) build(dir string) {
@@ -61,7 +51,7 @@ func getBuildInfo(dir string, quick bool, verbose bool) (*buildType, error) {
 
         if len(matches) == len(bType.files) {
             // Found a matching build system
-            fmt.Println("Using", bType.name, "->", bType.getTarget())
+            fmt.Println("Using", bType.name, "->", bType.getTarget(matches))
         }
     }
     return nil, nil

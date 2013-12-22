@@ -52,6 +52,7 @@ func runBuild(cmd *Command, args []string) {
 }
 
 func buildModule(dir string, verbose bool) error {
+    getBuildInfo(dir, true, true)
     err := errors.New("unimplemented feature - build")
     return err
 }

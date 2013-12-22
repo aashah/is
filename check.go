@@ -76,11 +76,12 @@ func checkModuleIntegrity(moduleRoot string, verbose bool) (valid bool, err erro
 
     /*
      * Checks:
-     * - valid XML
-     *     -> done through unmarshaling
+     * - valid & complete XML (*)
      * - Ensure primary directories from module manifest exist
-     * - inputs in module manifest can be found in hardware manager manifest
-     * - key attributes exist (with verbose display optional ones that aren't provided)
+     *     -> Depends greatly on how the code is structured, hard to be sure.
+     *     -> Especially since most the important ones are java-reliant
+     * - inputs in module manifest can be found in hardware manager manifest (*)
+     * - key attributes exist (with verbose display optional ones that aren't provided) (*)
      */
     
     return moduleManifest.isValid(hardwareManifest)
