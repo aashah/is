@@ -8,15 +8,12 @@ import (
     "path/filepath"
 )
 
-var moduleIntegrityCache map[string]bool
-
 func init() {
     cmdCheck.Run = runCheck
-    moduleIntegrityCache = make(map[string]bool)
 }
 
 var cmdCheck = &Command {
-    UsageLine: "chk [-v] [path to modules]",
+    UsageLine: "chk [-v] [-q] [path to modules]",
     Short: "Checks a given list of modules",
     Long: `
 Check will attempt to verify the integrity of a module primarily by looking at 
@@ -64,11 +61,8 @@ func runCheck(cmd *Command, args []string) {
     }
 }
 
-func checkIntegrityCache(dir string) bool {
-    return moduleIntegrityCache[dir]
-}
+func checkModuleIntegrity(moduleRoot string, verbose bool) (valid bool, err error) {
 
-func checkModuleIntegrity(moduleRoot string, verbose bool) (valid bool, err error) {    
     var hardwareManifest *xmlHardwareManifest
     var moduleManifest *xmlModuleManifest
 
@@ -80,11 +74,20 @@ func checkModuleIntegrity(moduleRoot string, verbose bool) (valid bool, err erro
         return false, err
     }
 
+    /*
+     * Checks:
+     * - valid XML
+     *     -> done through unmarshaling
+     * - Ensure primary directories from module manifest exist
+     * - inputs in module manifest can be found in hardware manager manifest
+     * - key attributes exist (with verbose display optional ones that aren't provided)
+     */
+
     err = errors.New("unimplemented feature - chk")
     if err == nil {
         fmt.Println(moduleManifest)
         fmt.Println(hardwareManifest)
-        moduleIntegrityCache[moduleRoot] = true 
+        return true, nil
     }
     return false, err
 }
