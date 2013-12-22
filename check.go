@@ -55,20 +55,7 @@ func runCheck(cmd *Command, args []string) {
 
         abs, err := filepath.Abs(dir)
 
-        // Try to find the manifest file
-        moduleManifest, err := findFileInsideModulePackage(abs, "**/manifest.xml", *checkQ, *checkV)
-
-        // Error could be from globbing, number of found matches, or from
-        // the prompting of which manifest to pick
-        if err != nil {
-            continue
-        }
-
-        if *checkV {
-            fmt.Fprintf(os.Stdout, "[info] is: using manifest.xml - %s\n", moduleManifest)
-        }
-
-        valid, err = checkModuleIntegrity(abs, moduleManifest, *checkV)
+        valid, err = checkModuleIntegrity(abs, *checkV)
         if err != nil {
             fmt.Fprintf(os.Stderr, "is: %s\n", err.Error())
         }
@@ -81,13 +68,14 @@ func checkIntegrityCache(dir string) bool {
     return moduleIntegrityCache[dir]
 }
 
-func checkModuleIntegrity(moduleRoot string, manifestPath string, verbose bool) (valid bool, err error) {    
+func checkModuleIntegrity(moduleRoot string, verbose bool) (valid bool, err error) {    
     var hardwareManifest *xmlHardwareManifest
     var moduleManifest *xmlModuleManifest
 
-    if moduleManifest, err = loadModuleManifest(manifestPath); err != nil {
+    if moduleManifest, err = loadModuleManifest(moduleRoot); err != nil {
         return false, err
     }
+
     printModuleManifest(moduleManifest)
 
     if hardwareManifest, err = loadHardwareManagerManifest(); err != nil {
@@ -103,10 +91,15 @@ func checkModuleIntegrity(moduleRoot string, manifestPath string, verbose bool) 
     return false, err
 }
 
-func loadModuleManifest(manifestPath string) (moduleManifest *xmlModuleManifest, err error) {
+func loadModuleManifest(moduleRoot string) (moduleManifest *xmlModuleManifest, err error) {
+    var moduleManifestPath string
     var raw []byte
 
-    if raw, err = readFile(manifestPath); err == nil {
+    if moduleManifestPath, err = findFileInsideModulePackage(moduleRoot, "**/manifest.xml", *checkQ, *checkV); err != nil {
+        return nil, err
+    }
+
+    if raw, err = readFile(moduleManifestPath); err == nil {
         err = xml.Unmarshal(raw, &moduleManifest)
     }
 
@@ -124,11 +117,11 @@ func loadHardwareManagerManifest() (hardwareManifest *xmlHardwareManifest, err e
     sdkPath = filepath.Join(sdkPath, "source", "interfaceSDK")
 
     // find hw manager manifest
-    if hwManagerManifestPath, err = findFileInsideModulePackage(sdkPath, "**/hardware_manager_manifest.xml", *checkQ, *checkV); err != nil {
+    if hardwareManifestPath, err = findFileInsideModulePackage(sdkPath, "**/hardware_manager_manifest.xml", *checkQ, *checkV); err != nil {
         return nil, err
     }
 
-    if raw, err = readFile(hwManagerManifestPath); err == nil {
+    if raw, err = readFile(hardwareManifestPath); err == nil {
         err = xml.Unmarshal(raw, &hardwareManifest)
     }
 
