@@ -28,26 +28,30 @@ type buildType struct {
 }
 
 var buildList = []*buildCmd{
-    
+    {
+        name: "Maven",
+        cmd: "mvn",
+        build: "clean package",
+    },
 }
 
 var buildTypes = []*buildType{
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    {
+        name: "Maven",
+        files: []string{
+            "pom.xml",
+        },
+        getTarget: func() string {
+            // TODO load pom file to find output directory
+            // Target dir:
+            // - project.build.outputDirectory
+            // - Defaults => {project.baseDir}/target
+            // Target name:
+            // - project.build.finalName
+            // - Defaults => {project.artifaceId}-{project.version}
+            return "t"
+        },
+    },
 }
 
 func (b *buildCmd) build(dir string) {
