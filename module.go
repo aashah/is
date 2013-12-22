@@ -75,7 +75,7 @@ func (x *xmlModuleManifest) isValid(hardwareManifest *xmlHardwareManifest) (vali
         return
     }
 
-    if valid, err = x.Module.isValid(); err != nil || !valid {
+    if valid, err = x.Module.isValid(hardwareManifest); err != nil || !valid {
         return
     }
 
@@ -93,7 +93,7 @@ func (x *xmlSDK) isValid() (valid bool, err error) {
     return true, nil
 }
 
-func (x *xmlModule) isValid() (valid bool, err error) {
+func (x *xmlModule) isValid(hardwareManifest *xmlHardwareManifest) (valid bool, err error) {
     switch {
     case x.Icon == "":
         return false, errors.New("manifest>module>icon attribute not provided or set")
@@ -108,6 +108,28 @@ func (x *xmlModule) isValid() (valid bool, err error) {
     for _, input := range x.Inputs {
         if valid, err = input.isValid(); err != nil || !valid {
             return
+        }
+
+        // check if input is in hardware manager manifest as well
+        // find a device that supports it
+        var inputSupported bool
+
+        CheckForSupportingDeviceLoop:
+        for _, device := range hardwareManifest.Devices {
+            if len(device.Provides) > 0 {
+                for _, support := range device.Provides {
+                    // FUTURE: Can cache results to faster lookups
+                    // -> Trivial computation at current time though
+                    if support.Name == input.InputType {
+                        inputSupported = true
+                        break CheckForSupportingDeviceLoop
+                    }
+                }
+            }
+        }
+
+        if !inputSupported {
+            return false, errors.New(fmt.Sprintf("input not supported by hardware manager - %s", input.InputType))
         }
     }
 
