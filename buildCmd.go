@@ -1,4 +1,4 @@
-package main
+package builds
 
 import (
     "fmt"
@@ -41,7 +41,7 @@ var buildTypes = []*buildType{
         files: []string{
             "pom.xml",
         },
-        getTarget: findMavenTarget,
+        getTarget: FindMavenTarget,
     },
 }
 
@@ -61,7 +61,7 @@ func getBuildInfo(dir string, quick bool, verbose bool) (*buildType, error) {
 
         if len(matches) == len(bType.files) {
             // Found a matching build system
-            fmt.Println("Using", bType.name)
+            fmt.Println("Using", bType.name, "->", bType.getTarget())
         }
     }
     return nil, nil

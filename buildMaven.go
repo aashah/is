@@ -1,6 +1,6 @@
-package main
+package builds
 
-func findMavenTarget() string {
+func FindMavenTarget() string {
     // TODO load pom file to find output directory
     // Target dir:
     // - project.build.outputDirectory
@@ -8,5 +8,5 @@ func findMavenTarget() string {
     // Target name:
     // - project.build.finalName
     // - Defaults => {project.artifaceId}-{project.version}
-    return ""
+    return "MAVEN TARGET"
 }
