@@ -87,8 +87,5 @@ func buildModule(dir string, verbose bool) (err error) {
         return err
     }
 
-    return errors.New("unimplemented feature - build")
+    return
 }
-
-// Need a system for attempting to interpret the structure of the directory
-// and how best to build it
