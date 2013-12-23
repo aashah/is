@@ -34,10 +34,12 @@ type buildInfo struct {
 
 var buildList = []*buildCmd{
     mavenBuildCmd,
+    antBuildCmd,
 }
 
 var buildTypes = []*buildType{
     mavenBuildType,
+    antBuildType,
 }
 
 func (b *buildInfo) build(dir string, verbose bool) (err error) {
