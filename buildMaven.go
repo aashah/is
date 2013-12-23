@@ -14,7 +14,7 @@ var mavenBuildCmd = &buildCmd{
     name: "Maven",
     cmd: "mvn",
     buildCmd: "clean package",
-    params: map[string]string{},
+    params: nil,
 }
 
 var mavenBuildType = &buildType{
