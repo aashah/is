@@ -55,10 +55,19 @@ func buildModule(dir string, verbose bool) (err error) {
     var info *buildInfo
 
     if info, err = getBuildInfo(dir, true, true); err != nil {
+        fmt.Println(err)
         return
     }
 
-    fmt.Println("Got cmd", info.target)
+    // call build
+    if err = info.build(dir, true); err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    // find jar
+    // move file
+
     
     return errors.New("unimplemented feature - build")
 }

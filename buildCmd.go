@@ -40,8 +40,8 @@ var buildTypes = []*buildType{
     mavenBuildType,
 }
 
-func (b *buildInfo) build(dir string) {
-    
+func (b *buildInfo) build(dir string, verbose bool) (err error) {
+    return runCmd(dir, b.cmd.cmd, b.cmd.buildCmd, verbose, b.cmd.params)
 }
 
 func getBuildInfo(dir string, quick bool, verbose bool) (info *buildInfo, err error) {
