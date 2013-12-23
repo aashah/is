@@ -13,7 +13,7 @@ func init() {
 }
 
 var cmdCheck = &Command {
-    UsageLine: "chk [-v] [-q] [path to modules]",
+    UsageLine: "chk [path to modules]",
     Short: "Checks a given list of modules",
     Long: `
 Check will attempt to verify the integrity of a module primarily by looking at 
@@ -24,16 +24,8 @@ Module Manifest file:
     - Ensure the package dir/class file exists
     - The inputs are provided through the Hardware Manager's Manifest file
     - All the key attributes to the manifest's data exist (package, class, uses-sdk)
-
-Flags:
-    -v [Verbose]:
-    -q [Quick]: Uses the first option rather than prompting the user on how to
-    proceed.
     `,
 }
-
-var checkV = cmdCheck.Flag.Bool("v", false, "")
-var checkQ = cmdCheck.Flag.Bool("q", false, "")
 
 func runCheck(cmd *Command, args []string) {
     for _, dir := range args {
@@ -52,7 +44,7 @@ func runCheck(cmd *Command, args []string) {
 
         abs, err := filepath.Abs(dir)
 
-        valid, err = checkModuleIntegrity(abs, *checkV)
+        valid, err = checkModuleIntegrity(abs, *flagVerbose)
         if err != nil {
             fmt.Fprintf(os.Stderr, "is: %s\n", err.Error())
         }
@@ -91,7 +83,7 @@ func loadModuleManifest(moduleRoot string, verbose bool) (moduleManifest *xmlMod
     var moduleManifestPath string
     var raw []byte
 
-    if moduleManifestPath, err = findFileInsideModulePackage(moduleRoot, "**/manifest.xml", *checkQ, *checkV); err != nil {
+    if moduleManifestPath, err = findFileInsideModulePackage(moduleRoot, "**/manifest.xml", *flagQuick, *flagVerbose); err != nil {
         return nil, err
     }
 
@@ -125,7 +117,7 @@ func loadHardwareManagerManifest(verbose bool) (hardwareManifest *xmlHardwareMan
     sdkPath = filepath.Join(sdkPath, "source", "interfaceSDK")
 
     // find hw manager manifest
-    if hardwareManifestPath, err = findFileInsideModulePackage(sdkPath, "**/hardware_manager_manifest.xml", *checkQ, *checkV); err != nil {
+    if hardwareManifestPath, err = findFileInsideModulePackage(sdkPath, "**/hardware_manager_manifest.xml", *flagQuick, *flagVerbose); err != nil {
         return nil, err
     }
 

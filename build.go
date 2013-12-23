@@ -1,7 +1,6 @@
 package main
 
 import (
-    "errors"
     "fmt"
     "os"
     "path/filepath"
@@ -24,8 +23,6 @@ module.
     `,
 }
 
-var buildV = cmdBuild.Flag.Bool("v", false, "")
-
 func runBuild(cmd *Command, args []string) {
     for _, dir := range args {
         // check validity of argument
@@ -44,7 +41,7 @@ func runBuild(cmd *Command, args []string) {
 
             continue
         }
-        err = buildModule(abs, *buildV)
+        err = buildModule(abs, *flagVerbose)
         if err != nil {
             fmt.Fprintf(os.Stderr, "is: %s\n", err.Error())
         }

@@ -7,6 +7,9 @@ import (
 	"strings"
 )
 
+var flagVerbose *bool
+var flagQuick *bool
+
 // Approach on handling subcommands has largely been influenced by
 // golang's approach towards the `go` cli command.
 // This can be found at src/cmd/go/main.go in the golang source at
@@ -52,8 +55,14 @@ var commands = []*Command{
 func generalUsage() {
 	fmt.Println(`
 Is is a tool for managing the Colorado School of Mines Interface SDK exhibit.
-Use "is help [command]" for more information about a command.
+Use "is help [flags] [command]" for more information about a command.
 Use "is [command] [command args] to execute the command.
+
+Available flags:
+	-v [Verbose]: Prints detailed information on the status of get as it retrieves
+		and builds each module.
+	-q [Quick]: Uses the first option rather than prompting the user on how to
+	    proceed.
 
 Available commands:
 	`)
@@ -74,8 +83,12 @@ func processHelp(helpCmd string) {
 }
 
 func main() {
+	flagVerbose = flag.Bool("v", false, "t")
+	flagQuick = flag.Bool("q", false, "")
 	flag.Parse()
 	args := flag.Args()
+
+	fmt.Println(*flagVerbose, *flagQuick, args)
 
 	if len(args) < 1 {
 		fmt.Println("usage...")
@@ -108,4 +121,6 @@ func main() {
 			os.Exit(0)
 		}
 	}
+
+	generalUsage()
 }

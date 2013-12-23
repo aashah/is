@@ -13,7 +13,7 @@ func init() {
 }
 
 var cmdGet = &Command{
-	UsageLine: "get [-v] [-b] [module paths]",
+	UsageLine: "get [-b] [module paths]",
 	Short:     "download and package modules",
 	Long: `
 Get downloads/updates modules as well as building the module for the interface
@@ -33,10 +33,7 @@ Example usages:
 	"is get -b github.com/aashah/Pong github.com/aashah/fractalModule": Downloads
 	several modules
 
-Flags:
-	-v [Verbose]: Prints detailed information on the status of get as it retrieves
-	and builds each module.
-	
+Flags:	
 	-b [Build]: Attempts to build the module and place it into the appropriate
 	directory.
 
@@ -45,7 +42,6 @@ module.
 	`,
 }
 
-var getV = cmdGet.Flag.Bool("v", false, "")
 var getB = cmdGet.Flag.Bool("b", false, "")
 
 func runGet(cmd *Command, args []string) {
@@ -90,13 +86,13 @@ func getModule(info *vcsInfo) error {
 
 	/*
 	// TODO need to find manifest file
-	// err = checkModuleIntegrity(targetPath, *getV)
+	// err = checkModuleIntegrity(targetPath, *flagVerbose)
 	if err != nil {
 		return err
 	}
 
 	if *getB {
-		err = buildModule(targetPath, *getV)
+		err = buildModule(targetPath, *flagVerbose)
 		if err != nil {
 			return err
 		}
@@ -112,7 +108,7 @@ func downloadModule(info *vcsInfo, targetPath string) error {
 		return err
 	}
 
-	if err := info.vcs.download(targetPath, info.repo, *getV); err != nil {
+	if err := info.vcs.download(targetPath, info.repo, *flagVerbose); err != nil {
 		return err
 	}
 	return nil
@@ -121,7 +117,7 @@ func downloadModule(info *vcsInfo, targetPath string) error {
 func updateModule(info *vcsInfo, targetPath string) error {
 	// cd into the directory, call the update command
 	// if verbose mode, output any data
-	if err := info.vcs.update(targetPath, *getV); err != nil {
+	if err := info.vcs.update(targetPath, *flagVerbose); err != nil {
 		return err
 	}
 	return nil
