@@ -53,19 +53,26 @@ func runBuild(cmd *Command, args []string) {
 
 func buildModule(dir string, verbose bool) (err error) {
     var info *buildInfo
+    var target string
 
-    if info, err = getBuildInfo(dir, true, true); err != nil {
+    if info, err = getBuildInfo(dir, true, verbose); err != nil {
         fmt.Println(err)
         return
     }
 
     // call build
-    if err = info.build(dir, true); err != nil {
+    if err = info.build(dir, verbose); err != nil {
         fmt.Println(err)
         return
     }
 
     // find jar
+    if target, err = findFileInsideModulePackage(dir, info.target, true, verbose); err != nil {
+        return err
+    }
+
+    fmt.Println("Found target:", target)
+    
     // move file
 
     

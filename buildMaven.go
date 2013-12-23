@@ -24,8 +24,6 @@ var mavenBuildType = &buildType{
 }
 
 func findMavenTarget(matches map[string]string) (target string, err error) {
-    fmt.Println("matches:", matches)
-
     var mavenProject *xmlMavenProject
     var raw []byte
 
@@ -53,6 +51,8 @@ func findMavenTarget(matches map[string]string) (target string, err error) {
 
         FinalName = fmt.Sprintf("%s-%s", mavenProject.ArtifactId, mavenProject.Version)
     }
+
+    FinalName = FinalName + ".jar"
 
     return filepath.Join(OutDirectory, FinalName), nil  
 }
