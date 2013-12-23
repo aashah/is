@@ -71,11 +71,11 @@ func getBuildInfo(dir string, quick bool, verbose bool) (info *buildInfo, err er
             }
 
 
-            return nil, errors.New("Could not find matching build command")
+            return nil, errors.New("Unknown error retrieving build information")
         }
 
     }
-    return nil, nil
+    return nil, errors.New("Could not find matching build command")
 }
 
 func getBuildCmd(buildTypeName string) *buildCmd {
