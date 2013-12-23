@@ -48,37 +48,6 @@ func (v *vcsCmd) String() string {
 	return v.name
 }
 
-func (v *vcsCmd) runCmd(dir string, cmdLine string, verbose bool, keyvals map[string]string) error {
-	if keyvals != nil {
-		// expand cmd
-		cmdLine = expand(keyvals, cmdLine)
-	}
-
-	args := strings.Fields(cmdLine)
-
-	// TODO Check if v.cmd exists
-	if _, err := exec.LookPath(v.cmd); err != nil {
-		fmt.Fprintf(os.Stderr, "is: missing %s command.", v.cmd)
-		return err
-	}
-
-	if verbose {
-		fmt.Println("Executing", v.cmd, "with", cmdLine, "...")
-	}
-	// Execute
-	cmd := exec.Command(v.cmd, args...)
-	cmd.Dir = dir
-	var buf bytes.Buffer
-	cmd.Stdout = &buf
-	cmd.Stderr = &buf
-	err := cmd.Run()
-	out := buf.Bytes()
-	if verbose {
-		os.Stdout.Write(out)
-	}
-	return err
-}
-
 func (v *vcsCmd) download(dir string, repo string, verbose bool) error {
 	keyvals := map[string]string{
 		"repo": repo,
@@ -165,14 +134,6 @@ func matchVcsPath(modulePath string) *vcsInfo {
 		}
 	}
 	return nil
-}
-
-func expand(list map[string]string, str string) string {
-	ret := str
-	for key, val := range list {
-		ret = strings.Replace(ret, "{"+key+"}", val, -1)
-	}
-	return ret
 }
 
 // TODO: match package name with vcsCmd
