@@ -1,6 +1,12 @@
 package main
 
-import "os"
+import (
+    "fmt"
+    "bytes"
+    "os"
+    "os/exec"
+    "strings"
+)
 
 func readFile(path string) (data []byte, err error) {
     var fi *os.File
