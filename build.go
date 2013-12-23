@@ -71,11 +71,22 @@ func buildModule(dir string, verbose bool) (err error) {
         return err
     }
 
-    fmt.Println("Found target:", target)
+    if verbose {
+        fmt.Println("Found target:", target)        
+    }
     
+   
     // move file
+    // prepare destination
+    var dstDirectory string
+    dstDirectory = os.Getenv("INTERFACESDKROOT")
+    dstDirectory = filepath.Join(dstDirectory, "development")
+    dstDirectory = filepath.Join(dstDirectory, "modules")
 
-    
+    if err = copyFile(target, dstDirectory); err != nil {
+        return err
+    }
+
     return errors.New("unimplemented feature - build")
 }
 
