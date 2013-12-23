@@ -84,12 +84,10 @@ func getModule(info *vcsInfo) error {
 		return err
 	}
 
-	/*
-	// TODO need to find manifest file
-	// err = checkModuleIntegrity(targetPath, *flagVerbose)
-	if err != nil {
-		return err
-	}
+	// FUTURE When the `chk` routine becomes more stable, it may become more
+	// appropriate to re-introduce the cache & make it mandatory before
+	// executing the `build` routine. However, in it's present state, it remains
+	// incomplete; therefor, it's best to ignore it for now.
 
 	if *getB {
 		err = buildModule(targetPath, *flagVerbose)
@@ -97,7 +95,6 @@ func getModule(info *vcsInfo) error {
 			return err
 		}
 	}
-	*/
 	return nil
 }
 
