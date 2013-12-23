@@ -1,10 +1,12 @@
 package main
 
 import (
-    "fmt"
     "bytes"
+    "fmt"
+    "io"
     "os"
     "os/exec"
+    "path/filepath"
     "strings"
 )
 
@@ -69,4 +71,29 @@ func runCmd(dir string, cmdName string, cmdLine string, verbose bool, keyvals ma
         os.Stdout.Write(out)
     }
     return err
+}
+
+func copyFile(src string, dstDirectory string) (err error) {
+    var sf, df *os.File
+    var sfStat os.FileInfo
+
+    if sf, err = os.Open(src); err != nil {
+        return err
+    }
+    defer sf.Close()
+
+    var dst string
+    if sfStat, err = sf.Stat(); err != nil {
+        return err
+    }
+    dst = filepath.Join(dstDirectory, sfStat.Name())
+
+
+    if df, err = os.Open(dst); err != nil {
+        return err
+    }
+    defer df.Close()
+
+    _, err = io.Copy(sf, df)
+    return
 }
