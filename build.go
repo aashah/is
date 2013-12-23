@@ -11,14 +11,15 @@ func init() {
 }
 
 var cmdBuild = &Command {
-    UsageLine: "build [-v] [path to modules]",
+    UsageLine: "build [path to modules]",
     Short: "builds a given list of modules",
     Long: `
-Build will attempt to a compile a list of modules given that they are structured
-correctly. If a module has not yet passed the integrity check, then build will
-call the check routine to ensure the module is structured correctly.
+Build will attempt to a compile a list of modules, given that they are structured
+correctly. Build will also move the target jar (if it can be found automatically)
+into the appropriate directory given by the INTERFACESDKROOT environment
+variable.
 
-See "go help check" to understand more on what is meant by the integrity of a
+See "go help chk" to understand more on what is meant by the integrity of a
 module.
     `,
 }

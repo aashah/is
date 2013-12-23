@@ -59,9 +59,9 @@ Use "is help [flags] [command]" for more information about a command.
 Use "is [command] [command args] to execute the command.
 
 Available flags:
-	-v [Verbose]: Prints detailed information on the status of get as it retrieves
+	-v [verbose]: Prints detailed information on the status of get as it retrieves
 		and builds each module.
-	-q [Quick]: Uses the first option rather than prompting the user on how to
+	-q [quick]: Uses the first option rather than prompting the user on how to
 	    proceed.
 
 Available commands:

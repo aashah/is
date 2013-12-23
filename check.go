@@ -20,10 +20,10 @@ Check will attempt to verify the integrity of a module primarily by looking at
 the module's and the Interface SDK's manifest files.
 
 Module Manifest file:
-    - Ensure it's valid XML
-    - Ensure the package dir/class file exists
+    - Ensure it's valid & complete XML
     - The inputs are provided through the Hardware Manager's Manifest file
-    - All the key attributes to the manifest's data exist (package, class, uses-sdk)
+    - All the key attributes to the manifest's data exist. Presently, all
+    attributes are considered mandatory.
     `,
 }
 

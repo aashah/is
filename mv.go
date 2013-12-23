@@ -9,7 +9,7 @@ func init() {
 }
 
 var cmdMv = &Command {
-    UsageLine: "mv [-v] [-b] [path to modules]",
+    UsageLine: "mv [-b] [module root directory] [destination directory]",
     Short: "mv moves pre-existing modules into the appropriate location",
     Long: `
 Moves pre-existing modules into the appropriate location. mv will also check
