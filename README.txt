@@ -7,14 +7,14 @@ go get github.com/aashah/is
 Afterwards, installation is made possible with:
 go install github.com/aashah/is
 
-The executable binary `is` can be found at $GOPATH/bin
+The executable binary `is` can be found in your $GOPATH/bin
 
 Goal:
 
 Providing a user a clean way of working with modules. Since our primary focus
 has been simplicity on the side of the user, abstracting away unecessary details
-such as where modules are or how they get loaded, a few features of this cli
-program are:
+such as where modules are or how they get loaded, this command-line tool aims to
+simplify dealing with module packages. A few features of this cli program are:
 
     get: The ability to get and build modules that reside in a version control
         system
@@ -22,19 +22,15 @@ program are:
     mv: Similar to get, but working with modules that pre-exist elsewhere on the
         file system
 
-    run: Running the SDK in a simple way
+    run: Running the SDK
 
     build: Building a module
 
     chk: Checking a module for how "complete" it is
 
-COMMAND LINE STRUCTURE:
-Prefix: is
-Subcommands: {
-    get: [-v verbose] [-b build] [modules]
-    mv: [-v verbose] [-b build] [directories]
-    run: [-v verbose]
-}
+See `is help [subcommand]` for more information regarding these commands.
+
+Author notes:
 
 - A lot of this code is derived from the practices used by the golang team for
 	implementing `go get` This includes their approach towards handling
@@ -49,10 +45,10 @@ Roadmap:
 
     get:
         retrieve module: done
-        check integrity: soon(tm)
-        build: soon(tm)
+        check integrity: done
+        build: done
     mv: soon(tm)
     version: done
     run: soon(tm)
-    build: soon(tm)
-    check: soon(tm)
+    build: done
+    check: done
