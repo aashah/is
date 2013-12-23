@@ -14,6 +14,7 @@ var mavenBuildCmd = &buildCmd{
     name: "Maven",
     cmd: "mvn",
     buildCmd: "clean package",
+    params: map[string]string{},
 }
 
 var mavenBuildType = &buildType{
@@ -49,7 +50,7 @@ func findMavenTarget(matches map[string]string) (target string, err error) {
         case mavenProject.Version == "":
             return "", errors.New("Resorting to {project.version for target name, but element not found or set")
         }
-        
+
         FinalName = fmt.Sprintf("%s-%s", mavenProject.ArtifactId, mavenProject.Version)
     }
 

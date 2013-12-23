@@ -18,6 +18,7 @@ type buildCmd struct {
     name string
     cmd string // name of executable
     buildCmd string // command to run on how to build
+    params map[string]string
 }
 
 type buildType struct {
@@ -39,8 +40,8 @@ var buildTypes = []*buildType{
     mavenBuildType,
 }
 
-func (b *buildCmd) build(dir string) {
-
+func (b *buildInfo) build(dir string) {
+    
 }
 
 func getBuildInfo(dir string, quick bool, verbose bool) (info *buildInfo, err error) {
