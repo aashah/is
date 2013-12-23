@@ -89,7 +89,7 @@ func copyFile(src string, dstDirectory string) (err error) {
     dst = filepath.Join(dstDirectory, sfStat.Name())
 
 
-    if df, err = os.Open(dst); err != nil {
+    if df, err = os.Create(dst); err != nil {
         return err
     }
     defer df.Close()
