@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
-import "encoding/xml"
+import (
+   "fmt"
+   "errors"
+   "encoding/xml"
+   "path/filepath"
+)
 
 var mavenDependencies = map[string]string{
     "pom": "pom.xml",
@@ -31,22 +35,25 @@ func findMavenTarget(matches map[string]string) (target string, err error) {
     var OutDirectory string
     var FinalName string
 
-    switch {
-    case mavenProject.Build.OutputDirectory == "":
+    OutDirectory = mavenProject.Build.OutputDirectory
+    FinalName = mavenProject.Build.FinalName
+
+    if mavenProject.Build.OutputDirectory == ""{
         OutDirectory = "target"
-    case mavenProject.Build.FinalName == "":
+    }
+
+    if mavenProject.Build.FinalName == ""{
         switch {
         case mavenProject.ArtifactId == "":
             return "", errors.New("Resorting to {project.artifactId for target name, but element not found or set")
         case mavenProject.Version == "":
             return "", errors.New("Resorting to {project.version for target name, but element not found or set")
         }
+        
         FinalName = fmt.Sprintf("%s-%s", mavenProject.ArtifactId, mavenProject.Version)
-    default:
-        OutDirectory = mavenProject.Build.OutputDirectory
-        Finalname = mavenProject.Build.Finalname
     }
-    return "MAVEN TARGET", nil  
+
+    return filepath.Join(OutDirectory, FinalName), nil  
 }
 
 type xmlMavenProject struct {
