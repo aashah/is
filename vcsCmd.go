@@ -53,14 +53,14 @@ func (v *vcsCmd) download(dir string, repo string, verbose bool) error {
 	if verbose {
 		fmt.Println("Downloading", repo, "into", dir)
 	}
-	return v.runCmd(dir, v.createCmd, verbose, keyvals)
+	return runCmd(dir, v.cmd, v.createCmd, verbose, keyvals)
 }
 
 func (v *vcsCmd) update(dir string, verbose bool) error {
 	if verbose {
 		fmt.Println("Updating", dir)
 	}
-	return v.runCmd(dir, v.updateCmd, verbose, nil)
+	return runCmd(dir, v.cmd, v.updateCmd, verbose, nil)
 }
 
 var vcsGit = &vcsCmd{

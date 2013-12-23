@@ -40,7 +40,7 @@ func expand(list map[string]string, str string) string {
     return ret
 }
 
-func (v *vcsCmd) runCmd(dir string, cmdLine string, verbose bool, keyvals map[string]string) error {
+func runCmd(dir string, cmdName string, cmdLine string, verbose bool, keyvals map[string]string) error {
     if keyvals != nil {
         // expand cmd
         cmdLine = expand(keyvals, cmdLine)
@@ -49,16 +49,16 @@ func (v *vcsCmd) runCmd(dir string, cmdLine string, verbose bool, keyvals map[st
     args := strings.Fields(cmdLine)
 
     // TODO Check if v.cmd exists
-    if _, err := exec.LookPath(v.cmd); err != nil {
-        fmt.Fprintf(os.Stderr, "is: missing %s command.", v.cmd)
+    if _, err := exec.LookPath(cmdName); err != nil {
+        fmt.Fprintf(os.Stderr, "is: missing %s command.", cmdName)
         return err
     }
 
     if verbose {
-        fmt.Println("Executing", v.cmd, "with", cmdLine, "...")
+        fmt.Println("Executing", cmdName, "with", cmdLine, "...")
     }
     // Execute
-    cmd := exec.Command(v.cmd, args...)
+    cmd := exec.Command(cmdName, args...)
     cmd.Dir = dir
     var buf bytes.Buffer
     cmd.Stdout = &buf
