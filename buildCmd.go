@@ -1,7 +1,8 @@
-package builds
+package main
 
 import (
-    "fmt"
+    "errors"
+    // "fmt"
     // "os"
     // "os/exec"
     // "regexp"
@@ -9,22 +10,25 @@ import (
 )
 
 func init() {
-    fmt.Println("Loading build helper file")
 }
 
-type findTarget func(matches[] string) string
+type findTarget func(matches map[string]string) (string, error)
 
 type buildCmd struct {
     name string
     cmd string // name of executable
     buildCmd string // command to run on how to build
-    target string // final location of jar
 }
 
 type buildType struct {
     name string
-    files []string // file(s) that must exist to be considered part of this build
+    files map[string]string // file(s) that must exist to be considered part of this build
     getTarget findTarget
+}
+
+type buildInfo struct {
+    cmd *buildCmd
+    target string // final location of jar
 }
 
 var buildList = []*buildCmd{
@@ -39,20 +43,34 @@ func (b *buildCmd) build(dir string) {
 
 }
 
-func getBuildInfo(dir string, quick bool, verbose bool) (*buildType, error) {
+func getBuildInfo(dir string, quick bool, verbose bool) (info *buildInfo, err error) {
     for _, bType := range buildTypes {
         // ensure all files have a match
-        var matches []string
-        for _, filePattern := range bType.files {
-            if path, err := findFileInsideModulePackage(dir, filePattern, quick, verbose); err == nil {
-                matches = append(matches, path)
+        matches := make(map[string]string)
+        for patternName, pattern := range bType.files {
+            var path string
+            if path, err = findFileInsideModulePackage(dir, pattern, quick, verbose); err != nil {
+                break                
             }
+            matches[patternName] = path
+        }
+        if len(matches) == len(bType.files) {
+            var target string
+            if target, err = bType.getTarget(matches); err != nil {
+                return nil, err
+            }
+
+            info = &buildInfo{}
+            if cmd := getBuildCmd(bType.name); cmd != nil {
+                info.cmd = cmd
+                info.target = target
+                return
+            }
+
+
+            return nil, errors.New("Could not find matching build command")
         }
 
-        if len(matches) == len(bType.files) {
-            // Found a matching build system
-            fmt.Println("Using", bType.name, "->", bType.getTarget(matches))
-        }
     }
     return nil, nil
 }

@@ -51,10 +51,16 @@ func runBuild(cmd *Command, args []string) {
     }
 }
 
-func buildModule(dir string, verbose bool) error {
-    getBuildInfo(dir, true, true)
-    err := errors.New("unimplemented feature - build")
-    return err
+func buildModule(dir string, verbose bool) (err error) {
+    var info *buildInfo
+
+    if info, err = getBuildInfo(dir, true, true); err != nil {
+        return
+    }
+
+    fmt.Println("Got cmd", info.target)
+    
+    return errors.New("unimplemented feature - build")
 }
 
 // Need a system for attempting to interpret the structure of the directory
