@@ -7,6 +7,7 @@ Things that need to be considered
 
 - An SDK version manager might be pretty cool, would help manage the
 	environment variables and maintaining backwards compatibility to a degree
+	- `is use {version}`
 	- For now, best to rely on certain env variables
 
 - Variables:

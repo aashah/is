@@ -43,10 +43,7 @@ Author notes:
 
 Roadmap:
 
-    get:
-        retrieve module: done
-        check integrity: done
-        build: done
+    get: done
     mv: soon(tm)
     version: done
     run: soon(tm)
